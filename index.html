@@ -5,16 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montijo - Painel Interativo Coprodia</title>
     
+    <!-- CSS Local do QGIS2Web -->
     <link rel="stylesheet" href="css/leaflet.css">
     <link rel="stylesheet" href="css/qgis2web.css">
-    <link rel="stylesheet" href="css/fontawesome-all.min.css">
     
     <style>
         :root {
             --verde-escuro: #0f6c37;
             --verde-claro: #5cb85c;
             --amarelo-ouro: #f8cc23;
-            --cinza-texto: #333333;
             --fundo-header: #ffffff;
         }
 
@@ -30,7 +29,7 @@
             overflow: hidden;
         }
 
-        /* --- ESTILO DO SEU CABEÇALHO CUSTOMIZADO --- */
+        /* --- CABEÇALHO CUSTOMIZADO --- */
         .site-header {
             background-color: var(--fundo-header);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -44,7 +43,6 @@
             box-sizing: border-box;
         }
 
-        /* LOGO AUMENTADA EM 20% */
         .logo-container img {
             height: 60px;
             display: block;
@@ -61,7 +59,7 @@
             background-color: transparent;
             border: 2px solid var(--verde-escuro);
             color: var(--verde-escuro);
-            padding: 8px 18px;
+            padding: 6px 18px;
             border-radius: 30px;
             cursor: pointer;
             font-size: 0.95rem;
@@ -79,11 +77,22 @@
             transform: translateY(-2px);
         }
 
-        .filter-btn i {
-            font-size: 18px;
+        /* --- ESTILIZAÇÃO E REMOÇÃO DE FUNDO DOS SEUS VETORES --- */
+        .btn-icon {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+            mix-blend-mode: multiply; /* Remove o fundo branco das imagens Jpeg automaticamente */
+            filter: contrast(1.2);
         }
 
-        /* --- CONFIGURAÇÃO DO MAPA INTEGRADO --- */
+        /* Garante visibilidade do ícone escuro quando o botão ganha fundo verde no hover */
+        .filter-btn:hover .btn-icon {
+            filter: brightness(0) invert(1);
+            mix-blend-mode: normal;
+        }
+
+        /* --- MAPA --- */
         #map {
             width: 100%;
             height: calc(100vh - 80px);
@@ -92,7 +101,7 @@
             z-index: 1000;
         }
 
-        /* --- CONFIGURAÇÃO EXCLUSIVA PARA CELULAR (RESPONSIVO) --- */
+        /* --- VISUALIZADOR MOBILE --- */
         @media (max-width: 768px) {
             .site-header {
                 flex-direction: column;
@@ -130,17 +139,19 @@
 
     <header class="site-header">
         <div class="logo-container">
-            <img src="CARIMBO-COPRODIA-oficial.png" alt="Coprodia - Usina de açúcar e etanol">
+            <img src="CARIMBO-COPRODIA-oficial.png" alt="Coprodia">
         </div>
 
         <nav class="filter-menu">
-            <button class="filter-btn" id="btn-agricola" onclick="alert('Filtrando áreas agrícolas de cana-de-açúcar...')">
-                <i class="fas fa-leaf"></i>
+            <!-- Botão Agrícola utilizando cana vetor.jpg -->
+            <button class="filter-btn" id="btn-agricola" onclick="alert('Filtrando talhões de Cana-de-açúcar...')">
+                <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
                 Agrícola
             </button>
 
-            <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando confinamentos pecuários...')">
-                <i class="fas fa-bullhorn"></i>
+            <!-- Botão Confinamento utilizando boi veto.jpg -->
+            <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
+                <img src="boi-vetor.jpg" class="btn-icon" alt="Boi">
                 Confinamento
             </button>
         </nav>
@@ -148,6 +159,7 @@
 
     <div id="map"></div>
 
+    <!-- Scripts de Suporte Originais -->
     <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
     <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -160,10 +172,10 @@
     <script src="js/labelgun.min.js"></script>
     <script src="js/labels.js"></script>
     
+    <!-- Carrega a sua base geográfica do repositório -->
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
-        // Inicialização do mapa focando na região correta
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
         }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
@@ -171,7 +183,6 @@
         var hash = new L.Hash(map);
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         
-        // Criando os Panes para empilhar as camadas de forma correta
         map.createPane('pane_GoogleSatellite_0');
         map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
         
@@ -186,41 +197,58 @@
         map.createPane('pane_2026_COPRODIA_BASE_1');
         map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
 
-        // Estilo visual com contorno Amarelo para destacar sobre o Satélite
-        function style_2026_COPRODIA_BASE_1_0() {
+        function style_talhao() {
             return {
                 pane: 'pane_2026_COPRODIA_BASE_1',
                 opacity: 1,
-                color: 'rgba(248,204,35,1.0)', // Borda Amarela
+                color: 'rgba(248,204,35,1.0)', // Contorno amarelo ouro de alto contraste
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
                 weight: 2.5,
                 fillOpacity: 0.15,
-                fillColor: 'rgba(15,108,55,1.0)', // Preenchimento Verde Interno
+                fillColor: 'rgba(15,108,55,1.0)', // Preenchimento translúcido da área
                 interactive: true,
             }
         }
 
-        // Carrega as feições do arquivo local de dados
-        var layer_2026_COPRODIA_BASE_1 = new L.geoJson(json_2026_COPRODIA_BASE_1_0, {
-            interactive: true,
-            pane: 'pane_2026_COPRODIA_BASE_1',
-            onEachFeature: function (feature, layer) {
-                var popupContent = '<div style="font-family: sans-serif; font-size: 12px; min-width: 150px;">';
-                popupContent += '<b>Informações do Talhão:</b><br><hr style="border:0; border-top:1px solid #ccc; margin:5px 0;">';
-                
-                // Mapeia qualquer atributo existente para não quebrar a tela
-                var identificador = feature.properties['id'] || feature.properties['ID'] || Object.values(feature.properties)[0] || 'Talhão';
-                popupContent += '<b>Identificação:</b> ' + autolinker.link(identificador.toLocaleString());
-                popupContent += '</div>';
-                
-                layer.bindPopup(popupContent, {maxHeight: 400});
-            },
-            style: style_2026_COPRODIA_BASE_1_0,
-        });
+        // CAPTURA AUTOMÁTICA DA VARIÁVEL: Varre a janela do navegador procurando a base exportada do QGIS
+        var dadosGeograficos = null;
+        if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
+            dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
+        } else {
+            // Busca dinâmica caso o QGIS tenha usado outro prefixo interno na exportação
+            for (var variavel in window) {
+                if (variavel.startsWith('json_2026_COPRODIA_BASE_1') || (variavel.includes('COPRODIA') && typeof window[variavel] === 'object')) {
+                    dadosGeograficos = window[variavel];
+                    break;
+                }
+            }
+        }
 
-        map.addLayer(layer_2026_COPRODIA_BASE_1);
+        // RENDERIZAÇÃO REAL DOS TALHÕES NA TELA
+        if (dadosGeograficos) {
+            var layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
+                interactive: true,
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                onEachFeature: function (feature, layer) {
+                    var popupContent = '<div style="font-family: sans-serif; font-size: 12px; min-width: 140px;">';
+                    popupContent += '<b>Informações do Talhão:</b><br><hr style="border:0; border-top:1px solid #ccc; margin:5px 0;">';
+                    
+                    // Lê dinamicamente qualquer dado de ID ou nome das colunas
+                    var propriedades = feature.properties;
+                    var idTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || Object.values(propriedades)[0] || 'Selecionado';
+                    
+                    popupContent += '<b>Identificação:</b> ' + autolinker.link(idTalhao.toLocaleString());
+                    popupContent += '</div>';
+                    layer.bindPopup(popupContent, {maxHeight: 400});
+                },
+                style: style_talhao,
+            });
+            map.addLayer(layer_2026_COPRODIA_BASE_1);
+        } else {
+            console.error("Aviso: A base vetorial de talhões não foi encontrada no escopo do documento.");
+        }
     </script>
 </body>
 </html>
