@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montijo - Painel Interativo Coprodia</title>
     
-    <!-- CSS Local do QGIS2Web -->
     <link rel="stylesheet" href="css/leaflet.css">
     <link rel="stylesheet" href="css/qgis2web.css">
     
@@ -29,7 +28,7 @@
             overflow: hidden;
         }
 
-        /* --- CABEÇALHO CUSTOMIZADO --- */
+        /* --- CABEÇALHO --- */
         .site-header {
             background-color: var(--fundo-header);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -55,6 +54,7 @@
             align-items: center;
         }
 
+        /* --- BOTÕES CORRIGIDOS (SEM SOMBRA/FUNDO ESCURO NO HOVER) --- */
         .filter-btn {
             background-color: transparent;
             border: 2px solid var(--verde-escuro);
@@ -70,26 +70,20 @@
             transition: all 0.3s ease;
         }
 
+        /* Mantém o botão limpo e profissional ao passar o mouse */
         .filter-btn:hover {
-            background-color: var(--verde-escuro);
-            color: #ffffff;
-            box-shadow: 0 4px 8px rgba(15, 108, 55, 0.3);
+            background-color: #f0f7f3; /* Fundo verde bem clarinho, mantendo o contraste */
+            color: var(--verde-escuro);
+            box-shadow: 0 4px 8px rgba(15, 108, 55, 0.15);
             transform: translateY(-2px);
         }
 
-        /* --- ESTILIZAÇÃO E REMOÇÃO DE FUNDO DOS SEUS VETORES --- */
+        /* Ícone tratado para ignorar o fundo branco sem gerar sombras estranhas */
         .btn-icon {
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             object-fit: contain;
-            mix-blend-mode: multiply; /* Remove o fundo branco das imagens Jpeg automaticamente */
-            filter: contrast(1.2);
-        }
-
-        /* Garante visibilidade do ícone escuro quando o botão ganha fundo verde no hover */
-        .filter-btn:hover .btn-icon {
-            filter: brightness(0) invert(1);
-            mix-blend-mode: normal;
+            mix-blend-mode: multiply;
         }
 
         /* --- MAPA --- */
@@ -101,7 +95,59 @@
             z-index: 1000;
         }
 
-        /* --- VISUALIZADOR MOBILE --- */
+        /* --- ESTILIZAÇÃO DO NOVO POP-UP INTERATIVO --- */
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 5px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .custom-popup-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            color: #333;
+            min-width: 220px;
+        }
+
+        .custom-popup-header {
+            background-color: var(--verde-escuro);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px 4px 0 0;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .custom-popup-table tr {
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .custom-popup-table tr:last-child {
+            border-bottom: none;
+        }
+
+        .custom-popup-table td {
+            padding: 6px 8px;
+        }
+
+        .popup-label {
+            font-weight: 700;
+            color: #555;
+            width: 45%;
+        }
+
+        .popup-value {
+            text-align: right;
+            font-weight: 500;
+            color: #111;
+        }
+
+        /* --- DESIGN RESPONSIVO MOBILE --- */
         @media (max-width: 768px) {
             .site-header {
                 flex-direction: column;
@@ -110,28 +156,10 @@
                 padding: 12px 15px;
                 height: auto;
             }
-            
-            .logo-container img {
-                height: 50px;
-                margin: 0 auto;
-            }
-
-            .filter-menu {
-                width: 100%;
-                justify-content: center;
-                gap: 10px;
-            }
-
-            .filter-btn {
-                padding: 6px 14px;
-                font-size: 0.85rem;
-                flex: 1;
-                justify-content: center;
-            }
-
-            #map {
-                height: calc(100vh - 135px); 
-            }
+            .logo-container img { height: 50px; margin: 0 auto; }
+            .filter-menu { width: 100%; justify-content: center; gap: 10px; }
+            .filter-btn { padding: 6px 14px; font-size: 0.85rem; flex: 1; justify-content: center; }
+            #map { height: calc(100vh - 135px); }
         }
     </style>
 </head>
@@ -143,13 +171,11 @@
         </div>
 
         <nav class="filter-menu">
-            <!-- Botão Agrícola utilizando cana vetor.jpg -->
             <button class="filter-btn" id="btn-agricola" onclick="alert('Filtrando talhões de Cana-de-açúcar...')">
                 <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
                 Agrícola
             </button>
 
-            <!-- Botão Confinamento utilizando boi veto.jpg -->
             <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
                 <img src="boi-vetor.jpg" class="btn-icon" alt="Boi">
                 Confinamento
@@ -159,7 +185,6 @@
 
     <div id="map"></div>
 
-    <!-- Scripts de Suporte Originais -->
     <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
     <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -172,7 +197,6 @@
     <script src="js/labelgun.min.js"></script>
     <script src="js/labels.js"></script>
     
-    <!-- Carrega a sua base geográfica do repositório -->
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
@@ -201,23 +225,21 @@
             return {
                 pane: 'pane_2026_COPRODIA_BASE_1',
                 opacity: 1,
-                color: 'rgba(248,204,35,1.0)', // Contorno amarelo ouro de alto contraste
+                color: 'rgba(248,204,35,1.0)', // Contorno amarelo ouro
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
-                weight: 2.5,
-                fillOpacity: 0.15,
-                fillColor: 'rgba(15,108,55,1.0)', // Preenchimento translúcido da área
+                weight: 2.2,
+                fillOpacity: 0.12,
+                fillColor: 'rgba(15,108,55,1.0)',
                 interactive: true,
             }
         }
 
-        // CAPTURA AUTOMÁTICA DA VARIÁVEL: Varre a janela do navegador procurando a base exportada do QGIS
         var dadosGeograficos = null;
         if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
             dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
         } else {
-            // Busca dinâmica caso o QGIS tenha usado outro prefixo interno na exportação
             for (var variavel in window) {
                 if (variavel.startsWith('json_2026_COPRODIA_BASE_1') || (variavel.includes('COPRODIA') && typeof window[variavel] === 'object')) {
                     dadosGeograficos = window[variavel];
@@ -226,28 +248,50 @@
             }
         }
 
-        // RENDERIZAÇÃO REAL DOS TALHÕES NA TELA
         if (dadosGeograficos) {
             var layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
                 interactive: true,
                 pane: 'pane_2026_COPRODIA_BASE_1',
                 onEachFeature: function (feature, layer) {
-                    var popupContent = '<div style="font-family: sans-serif; font-size: 12px; min-width: 140px;">';
-                    popupContent += '<b>Informações do Talhão:</b><br><hr style="border:0; border-top:1px solid #ccc; margin:5px 0;">';
-                    
-                    // Lê dinamicamente qualquer dado de ID ou nome das colunas
                     var propriedades = feature.properties;
-                    var idTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || Object.values(propriedades)[0] || 'Selecionado';
                     
-                    popupContent += '<b>Identificação:</b> ' + autolinker.link(idTalhao.toLocaleString());
-                    popupContent += '</div>';
-                    layer.bindPopup(popupContent, {maxHeight: 400});
+                    // Identifica o título principal do Talhão dinamicamente
+                    var tituloTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || propriedades['Talhão'] || 'Dados do Talhão';
+                    
+                    // CONSTRUTOR DINÂMICO DE TABELA (Puxa todas as colunas existentes na sua planilha)
+                    var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
+                    tabelaConteudo += '<table class="custom-popup-table">';
+                    
+                    var temDados = false;
+                    for (var chave in propriedades) {
+                        // Ignora colunas de ID repetitivas para não poluir o visual
+                        if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
+                        
+                        // Formata nomes de colunas feias vindas do QGIS (ex: "area_ha" vira "Area Ha")
+                        var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
+                        
+                        tabelaConteudo += '<tr>';
+                        tabelaConteudo += '<td class="popup-label">' + nomeColuna + ':</td>';
+                        tabelaConteudo += '<td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td>';
+                        tabelaConteudo += '</tr>';
+                        temDados = true;
+                    }
+                    
+                    // Fallback se não houver mais colunas além do ID
+                    if (!temDados) {
+                        tabelaConteudo += '<tr><td class="popup-label">Código:</td><td class="popup-value">' + tituloTalhao + '</td></tr>';
+                    }
+                    
+                    tabelaConteudo += '</table>';
+                    
+                    layer.bindPopup(tabelaConteudo, {
+                        maxHeight: 400,
+                        className: 'custom-popup' // Aplica a nossa estilização nova
+                    });
                 },
                 style: style_talhao,
             });
             map.addLayer(layer_2026_COPRODIA_BASE_1);
-        } else {
-            console.error("Aviso: A base vetorial de talhões não foi encontrada no escopo do documento.");
         }
     </script>
 </body>
