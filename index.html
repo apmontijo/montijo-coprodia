@@ -6,7 +6,6 @@
     <title>Montijo - Painel Interativo Coprodia</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
-    <!-- CSS e Bibliotecas OBRIGATÓRIAS do Leaflet -->
     <link rel="stylesheet" href="css/leaflet.css">
     <link rel="stylesheet" href="css/qgis2web.css">
     <link rel="stylesheet" href="css/fontawesome-all.min.css">
@@ -113,7 +112,6 @@
 </head>
 <body>
 
-    <!-- Cabeçalho Oficial -->
     <header class="site-header">
         <div class="logo-container">
             <img src="CARIMBO-COPRODIA-oficial.png" alt="Coprodia - Usina de açúcar e etanol">
@@ -132,10 +130,8 @@
         </nav>
     </header>
 
-    <!-- O Mapa renderiza exatamente aqui -->
     <div id="map"></div>
 
-    <!-- Scripts do QGIS2Web e Leaflet -->
     <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
     <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -150,57 +146,63 @@
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
-        // Inicializa o mapa com as coordenadas originais do seu projeto
+        // Inicialização padrão do mapa
         var map = L.map('map', {
-            zoomControl: true, maxZoom: 28, minZoom: 1
+            zoomControl:true, maxZoom:28, minZoom:1
         }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
         
         var hash = new L.Hash(map);
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         
-        // Adiciona a Camada de Satélite do Google automaticamente ao fundo
+        // Criando os Panes para garantir a ordem das camadas (Satélite embaixo, Vetor em cima)
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        
         var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
             opacity: 1.0,
             minZoom: 1,
-            maxZoom: 28
+            maxZoom: 28,
         });
         map.addLayer(layer_GoogleSatellite_0);
 
-        // Estilo visual dos Polígonos (Verde Corporativo combinando com a marca)
+        map.createPane('pane_2026_COPRODIA_BASE_1');
+        map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
+
+        // Função de estilo com bordas visíveis
         function style_2026_COPRODIA_BASE_1_0() {
             return {
+                pane: 'pane_2026_COPRODIA_BASE_1',
                 opacity: 1,
-                color: 'rgba(15,108,55,1.0)', // Verde escuro nas bordas
+                color: 'rgba(248,204,35,1.0)', // Borda Amarela para dar forte contraste com o satélite
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
                 weight: 2.0,
-                fillOpacity: 0.25,
-                fillColor: 'rgba(92,184,92,1.0)', // Verde claro no preenchimento
+                fillOpacity: 0.2,
+                fillColor: 'rgba(92,184,92,1.0)', // Preenchimento Verde claro semi-transparente
                 interactive: true,
             }
         }
 
-        // Renderiza o seu arquivo de dados leves (1.92 MB)
+        // Renderiza os dados lidos do arquivo JS da pasta data
         var layer_2026_COPRODIA_BASE_1 = new L.geoJson(json_2026_COPRODIA_BASE_1_0, {
+            attribution: '',
             interactive: true,
+            dataVar: 'json_2026_COPRODIA_BASE_1_0',
+            layerName: 'layer_2026_COPRODIA_BASE_1',
+            pane: 'pane_2026_COPRODIA_BASE_1',
             onEachFeature: function (feature, layer) {
-                // Estrutura a caixinha de texto que abre ao clicar no talhão
-                var popupContent = '<table style="font-family: sans-serif; font-size: 12px;">\
+                var popupContent = '<table>\
                         <tr>\
-                            <td colspan="2"><b>Informações do Talhão</b></td>\
-                        </tr>\
-                        <tr>\
-                            <td colspan="2" style="padding-top: 5px;">' + 
-                            (feature.properties['id'] !== null ? '<b>ID:</b> ' + autolinker.link(feature.properties['id'].toLocaleString()) : 'Sem dados') + 
-                            '</td>\
+                            <td colspan="2"><b>Talhão:</b> ' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : 'Sem ID') + '</td>\
                         </tr>\
                     </table>';
                 layer.bindPopup(popupContent, {maxHeight: 400});
             },
             style: style_2026_COPRODIA_BASE_1_0,
         });
-        
+
         map.addLayer(layer_2026_COPRODIA_BASE_1);
     </script>
 </body>
