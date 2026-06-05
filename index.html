@@ -175,7 +175,60 @@
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         
         // Aqui o Leaflet vai puxar os seus dados leves automaticamente
-        var bounds_group = new L.featureGroup([]);
+        var bounds_group = var bounds_group = new L.featureGroup([]);
+        function setBounds() {
+        }
+        
+        // Carrega o fundo de Satélite Google
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            opacity: 1.0,
+            attribution: '',
+            minZoom: 1,
+            maxZoom: 28,
+            minNativeZoom: 0,
+            maxNativeZoom: 20
+        });
+        map.addLayer(layer_GoogleSatellite_0);
+
+        // Define o estilo visual das linhas dos seus talhões
+        function style_2026_COPRODIA_BASE_1_0() {
+            return {
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                opacity: 1,
+                color: 'rgba(92,184,92,1.0)', // Verde claro combinando com seu botão
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.0,
+                fillOpacity: 0.2,
+                fillColor: 'rgba(92,184,92,0.4)',
+                interactive: true,
+            }
+        }
+        map.createPane('pane_2026_COPRODIA_BASE_1');
+        map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
+        map.getPane('pane_2026_COPRODIA_BASE_1').style.pointerEvents = 'none';
+
+        // Carrega os seus dados leves de 1.92MB
+        var jsonSource_2026_COPRODIA_BASE_1 = json_2026_COPRODIA_BASE_1_0;
+        var layer_2026_COPRODIA_BASE_1 = new L.geoJson(jsonSource_2026_COPRODIA_BASE_1, {
+            attribution: '',
+            interactive: true,
+            dataVar: 'json_2026_COPRODIA_BASE_1_0',
+            layerName: 'layer_2026_COPRODIA_BASE_1',
+            pane: 'pane_2026_COPRODIA_BASE_1',
+            onEachFeature: function (feature, layer) {
+                var popupContent = '<table>\
+                        <tr>\
+                            <td colspan="2"><b>Talhão:</b> ' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                        </tr>\
+                    </table>';
+                layer.bindPopup(popupContent, {maxHeight: 400});
+            },
+            style: style_2026_COPRODIA_BASE_1_0,
+        });
+        bounds_group.addLayer(layer_2026_COPRODIA_BASE_1);
+        map.addLayer(layer_2026_COPRODIA_BASE_1);
         function setBounds() {}
     </script>
 </body>
