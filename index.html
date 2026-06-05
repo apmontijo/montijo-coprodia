@@ -6,13 +6,12 @@
     <title>Montijo - Painel Interativo Coprodia</title>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
     
-    <!-- Scripts e CSS originais do Mapa (Não mexer) -->
+    <!-- CSS e Bibliotecas OBRIGATÓRIAS do Leaflet -->
     <link rel="stylesheet" href="css/leaflet.css">
     <link rel="stylesheet" href="css/qgis2web.css">
     <link rel="stylesheet" href="css/fontawesome-all.min.css">
     
     <style>
-        /* --- SEUS ESTILOS PERSONALIZADOS --- */
         :root {
             --verde-escuro: #0f6c37;
             --verde-claro: #5cb85c;
@@ -30,9 +29,10 @@
             background-color: #f4f6f4;
             display: flex;
             flex-direction: column;
+            overflow: hidden;
         }
 
-        /* --- ESTRUTURA DO HEADER FIXO --- */
+        /* --- ESTILO DO SEU CABEÇALHO CUSTOMIZADO --- */
         .site-header {
             background-color: var(--fundo-header);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -41,7 +41,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 4px solid var(--verde-escuro);
-            z-index: 2000; /* Garante que fica acima do mapa */
+            z-index: 2000;
             height: 70px;
             box-sizing: border-box;
         }
@@ -80,30 +80,23 @@
             transform: translateY(-2px);
         }
 
-        .filter-btn:active {
-            transform: translateY(0);
-        }
-
         .filter-btn .material-symbols-outlined {
             font-size: 22px;
-            transition: transform 0.3s ease;
         }
 
         .filter-btn:hover .material-symbols-outlined {
             color: var(--amarelo-ouro);
         }
 
-        /* --- CONFIGURAÇÃO DO MAPA PARA OCUPAR O RESTO DA TELA --- */
+        /* --- CONFIGURAÇÃO DO MAPA INTEGRADO --- */
         #map {
-            flex-grow: 1;
             width: 100%;
-            height: calc(100% - 70px);
+            height: calc(100vh - 70px);
             padding: 0;
             margin: 0;
             z-index: 1000;
         }
 
-        /* Responsividade */
         @media (max-width: 600px) {
             .site-header {
                 flex-direction: column;
@@ -113,45 +106,36 @@
                 height: auto;
             }
             #map {
-                height: calc(100% - 120px);
-            }
-            .filter-menu {
-                width: 100%;
-                justify-content: center;
-                gap: 10px;
-            }
-            .filter-btn {
-                padding: 6px 12px;
-                font-size: 0.85rem;
+                height: calc(100vh - 120px);
             }
         }
     </style>
 </head>
 <body>
 
-    <!-- Seu Cabeçalho Customizado (Ajustado para usar a foto oficial que subimos) -->
+    <!-- Cabeçalho Oficial -->
     <header class="site-header">
         <div class="logo-container">
             <img src="CARIMBO-COPRODIA-oficial.png" alt="Coprodia - Usina de açúcar e etanol">
         </div>
 
         <nav class="filter-menu">
-            <button class="filter-btn" id="btn-agricola" onclick="console.log('Filtro Agrícola clicado')">
+            <button class="filter-btn" id="btn-agricola" onclick="alert('Filtrando áreas agrícolas...')">
                 <span class="material-symbols-outlined">potted_plant</span>
                 Agrícola
             </button>
 
-            <button class="filter-btn" id="btn-confinamento" onclick="console.log('Filtro Confinamento clicado')">
+            <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando confinamentos...')">
                 <span class="material-symbols-outlined">agriculture</span>
                 Confinamento
             </button>
         </nav>
     </header>
 
-    <!-- O Mapa do QGIS renderiza exatamente aqui dentro -->
+    <!-- O Mapa renderiza exatamente aqui -->
     <div id="map"></div>
 
-    <!-- Scripts vitais do QGIS2Web (Não mexer) -->
+    <!-- Scripts do QGIS2Web e Leaflet -->
     <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
     <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -159,7 +143,6 @@
     <script src="js/L.Control.Locate.min.js"></script>
     <script src="js/leaflet-hash.js"></script>
     <script src="js/leaflet.pattern.js"></script>
-    <script src="js/leaflet-tilelayer-wmts.js"></script>
     <script src="js/Autolinker.min.js"></script>
     <script src="js/rbush.min.js"></script>
     <script src="js/labelgun.min.js"></script>
@@ -167,69 +150,58 @@
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
+        // Inicializa o mapa com as coordenadas originais do seu projeto
         var map = L.map('map', {
-            zoomControl:false, maxZoom:28, minZoom:1
+            zoomControl: true, maxZoom: 28, minZoom: 1
         }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
+        
         var hash = new L.Hash(map);
-        map.attributionControl.setPrefix('<a href="https://github.com/tomchadwin/qgis2web" target="_blank">qgis2web</a> &middot; <a href="https://leafletjs.com" title="A JS library for interactive maps">Leaflet</a>');
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
         
-        // Aqui o Leaflet vai puxar os seus dados leves automaticamente
-        var bounds_group = var bounds_group = new L.featureGroup([]);
-        function setBounds() {
-        }
-        
-        // Carrega o fundo de Satélite Google
+        // Adiciona a Camada de Satélite do Google automaticamente ao fundo
         var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
             opacity: 1.0,
-            attribution: '',
             minZoom: 1,
-            maxZoom: 28,
-            minNativeZoom: 0,
-            maxNativeZoom: 20
+            maxZoom: 28
         });
         map.addLayer(layer_GoogleSatellite_0);
 
-        // Define o estilo visual das linhas dos seus talhões
+        // Estilo visual dos Polígonos (Verde Corporativo combinando com a marca)
         function style_2026_COPRODIA_BASE_1_0() {
             return {
-                pane: 'pane_2026_COPRODIA_BASE_1',
                 opacity: 1,
-                color: 'rgba(92,184,92,1.0)', // Verde claro combinando com seu botão
+                color: 'rgba(15,108,55,1.0)', // Verde escuro nas bordas
                 dashArray: '',
                 lineCap: 'square',
                 lineJoin: 'bevel',
                 weight: 2.0,
-                fillOpacity: 0.2,
-                fillColor: 'rgba(92,184,92,0.4)',
+                fillOpacity: 0.25,
+                fillColor: 'rgba(92,184,92,1.0)', // Verde claro no preenchimento
                 interactive: true,
             }
         }
-        map.createPane('pane_2026_COPRODIA_BASE_1');
-        map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
-        map.getPane('pane_2026_COPRODIA_BASE_1').style.pointerEvents = 'none';
 
-        // Carrega os seus dados leves de 1.92MB
-        var jsonSource_2026_COPRODIA_BASE_1 = json_2026_COPRODIA_BASE_1_0;
-        var layer_2026_COPRODIA_BASE_1 = new L.geoJson(jsonSource_2026_COPRODIA_BASE_1, {
-            attribution: '',
+        // Renderiza o seu arquivo de dados leves (1.92 MB)
+        var layer_2026_COPRODIA_BASE_1 = new L.geoJson(json_2026_COPRODIA_BASE_1_0, {
             interactive: true,
-            dataVar: 'json_2026_COPRODIA_BASE_1_0',
-            layerName: 'layer_2026_COPRODIA_BASE_1',
-            pane: 'pane_2026_COPRODIA_BASE_1',
             onEachFeature: function (feature, layer) {
-                var popupContent = '<table>\
+                // Estrutura a caixinha de texto que abre ao clicar no talhão
+                var popupContent = '<table style="font-family: sans-serif; font-size: 12px;">\
                         <tr>\
-                            <td colspan="2"><b>Talhão:</b> ' + (feature.properties['id'] !== null ? autolinker.link(feature.properties['id'].toLocaleString()) : '') + '</td>\
+                            <td colspan="2"><b>Informações do Talhão</b></td>\
+                        </tr>\
+                        <tr>\
+                            <td colspan="2" style="padding-top: 5px;">' + 
+                            (feature.properties['id'] !== null ? '<b>ID:</b> ' + autolinker.link(feature.properties['id'].toLocaleString()) : 'Sem dados') + 
+                            '</td>\
                         </tr>\
                     </table>';
                 layer.bindPopup(popupContent, {maxHeight: 400});
             },
             style: style_2026_COPRODIA_BASE_1_0,
         });
-        bounds_group.addLayer(layer_2026_COPRODIA_BASE_1);
+        
         map.addLayer(layer_2026_COPRODIA_BASE_1);
-        function setBounds() {}
     </script>
 </body>
 </html>
