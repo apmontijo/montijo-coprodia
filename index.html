@@ -28,7 +28,95 @@
             overflow: hidden;
         }
 
-        /* --- CABEÇALHO --- */
+        /* --- TELA DE BOAS-VINDAS (SPLASH SCREEN) --- */
+        #welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Substitua pelo nome real da sua imagem carregada no GitHub */
+            background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65)), url('lavoura-cana.jpg') no-repeat center center;
+            background-size: cover;
+            z-index: 9999; /* Fica acima de absolutamente tudo */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        /* Quando clicado, essa classe faz a tela sumir suavemente */
+        #welcome-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .welcome-content {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            color: #333;
+            border-bottom: 5px solid var(--verde-escuro);
+        }
+
+        .welcome-logo {
+            height: 80px;
+            margin-bottom: 20px;
+            width: auto;
+        }
+
+        .welcome-content h1 {
+            font-size: 1.8rem;
+            margin: 0 0 10px 0;
+            color: var(--verde-escuro);
+            font-weight: 700;
+        }
+
+        .welcome-content p {
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* Botão Principal de Entrada */
+        .enter-btn {
+            background-color: var(--verde-escuro);
+            color: white;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 30px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: 0 4px 15px rgba(15, 108, 55, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .enter-btn:hover {
+            background-color: #0b5229;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 108, 55, 0.4);
+        }
+
+        .enter-btn img {
+            width: 22px;
+            height: 22px;
+            filter: brightness(0) invert(1); /* Deixa o ícone da cana branco no botão */
+        }
+
+        /* --- CABEÇALHO DO MAPA --- */
         .site-header {
             background-color: var(--fundo-header);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
@@ -54,7 +142,6 @@
             align-items: center;
         }
 
-        /* --- BOTÕES CORRIGIDOS (SEM SOMBRA/FUNDO ESCURO NO HOVER) --- */
         .filter-btn {
             background-color: transparent;
             border: 2px solid var(--verde-escuro);
@@ -70,15 +157,13 @@
             transition: all 0.3s ease;
         }
 
-        /* Mantém o botão limpo e profissional ao passar o mouse */
         .filter-btn:hover {
-            background-color: #f0f7f3; /* Fundo verde bem clarinho, mantendo o contraste */
+            background-color: #f0f7f3;
             color: var(--verde-escuro);
             box-shadow: 0 4px 8px rgba(15, 108, 55, 0.15);
             transform: translateY(-2px);
         }
 
-        /* Ícone tratado para ignorar o fundo branco sem gerar sombras estranhas */
         .btn-icon {
             width: 26px;
             height: 26px;
@@ -95,7 +180,7 @@
             z-index: 1000;
         }
 
-        /* --- ESTILIZAÇÃO DO NOVO POP-UP INTERATIVO --- */
+        /* --- POP-UP CUSTOMIZADO --- */
         .custom-popup .leaflet-popup-content-wrapper {
             background: #ffffff;
             border-radius: 8px;
@@ -123,47 +208,37 @@
             font-size: 14px;
         }
 
-        .custom-popup-table tr {
-            border-bottom: 1px solid #eaeaea;
-        }
+        .custom-popup-table tr { border-bottom: 1px solid #eaeaea; }
+        .custom-popup-table tr:last-child { border-bottom: none; }
+        .custom-popup-table td { padding: 6px 8px; }
+        .popup-label { font-weight: 700; color: #555; width: 45%; }
+        .popup-value { text-align: right; font-weight: 500; color: #111; }
 
-        .custom-popup-table tr:last-child {
-            border-bottom: none;
-        }
-
-        .custom-popup-table td {
-            padding: 6px 8px;
-        }
-
-        .popup-label {
-            font-weight: 700;
-            color: #555;
-            width: 45%;
-        }
-
-        .popup-value {
-            text-align: right;
-            font-weight: 500;
-            color: #111;
-        }
-
-        /* --- DESIGN RESPONSIVO MOBILE --- */
         @media (max-width: 768px) {
-            .site-header {
-                flex-direction: column;
-                justify-content: center;
-                gap: 12px;
-                padding: 12px 15px;
-                height: auto;
-            }
+            .site-header { flex-direction: column; justify-content: center; gap: 12px; padding: 12px 15px; height: auto; }
             .logo-container img { height: 50px; margin: 0 auto; }
             .filter-menu { width: 100%; justify-content: center; gap: 10px; }
             .filter-btn { padding: 6px 14px; font-size: 0.85rem; flex: 1; justify-content: center; }
             #map { height: calc(100vh - 135px); }
+            .welcome-content { padding: 25px; }
+            .welcome-content h1 { font-size: 1.5rem; }
         }
     </style>
 </head>
 <body>
+
+    <div id="welcome-screen">
+        <div class="welcome-content">
+            <img src="CARIMBO-COPRODIA-oficial.png" class="welcome-logo" alt="Coprodia Logo">
+            <h1>Plataforma de Gestão Territorial</h1>
+            <p>Selecione o setor abaixo para carregar o mosaico completo de talhões e a base de monitoramento georreferenciada.</p>
+            
+            <button class="enter-btn" onclick="entrarNoMapa()">
+                <img src="cana-vetor.jpg" alt="Cana">
+                Visualizar Setor Agrícola
+            </button>
+        </div>
+    </div>
 
     <header class="site-header">
         <div class="logo-container">
@@ -171,7 +246,7 @@
         </div>
 
         <nav class="filter-menu">
-            <button class="filter-btn" id="btn-agricola" onclick="alert('Filtrando talhões de Cana-de-açúcar...')">
+            <button class="filter-btn" id="btn-agricola" onclick="alert('Mostrando talhões agrícolas de cana-de-açúcar.')">
                 <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
                 Agrícola
             </button>
@@ -200,6 +275,18 @@
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
+        // Função que esconde a tela de abertura e revela o mapa
+        function entrarNoMapa() {
+            var tela = document.getElementById('welcome-screen');
+            tela.classList.add('hidden');
+            
+            // Força o Leaflet a recalcular o tamanho da tela para não bugar o mapa ao aparecer
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 850);
+        }
+
+        // Inicialização padrão do Leaflet
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
         }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
@@ -254,20 +341,15 @@
                 pane: 'pane_2026_COPRODIA_BASE_1',
                 onEachFeature: function (feature, layer) {
                     var propriedades = feature.properties;
-                    
-                    // Identifica o título principal do Talhão dinamicamente
                     var tituloTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || propriedades['Talhão'] || 'Dados do Talhão';
                     
-                    // CONSTRUTOR DINÂMICO DE TABELA (Puxa todas as colunas existentes na sua planilha)
                     var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
                     tabelaConteudo += '<table class="custom-popup-table">';
                     
                     var temDados = false;
                     for (var chave in propriedades) {
-                        // Ignora colunas de ID repetitivas para não poluir o visual
                         if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
                         
-                        // Formata nomes de colunas feias vindas do QGIS (ex: "area_ha" vira "Area Ha")
                         var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
                         
                         tabelaConteudo += '<tr>';
@@ -277,7 +359,6 @@
                         temDados = true;
                     }
                     
-                    // Fallback se não houver mais colunas além do ID
                     if (!temDados) {
                         tabelaConteudo += '<tr><td class="popup-label">Código:</td><td class="popup-value">' + tituloTalhao + '</td></tr>';
                     }
@@ -286,7 +367,7 @@
                     
                     layer.bindPopup(tabelaConteudo, {
                         maxHeight: 400,
-                        className: 'custom-popup' // Aplica a nossa estilização nova
+                        className: 'custom-popup'
                     });
                 },
                 style: style_talhao,
