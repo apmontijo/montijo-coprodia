@@ -45,7 +45,6 @@
             color: white;
             text-align: center;
             transition: opacity 0.8s ease, visibility 0.8s ease;
-            padding: 40px 20px 20px 20px;
             box-sizing: border-box;
         }
 
@@ -63,7 +62,7 @@
             width: 100%;
             color: #333;
             border-bottom: 5px solid var(--verde-escuro);
-            margin: auto 0;
+            margin: auto 20px;
         }
 
         .welcome-logo {
@@ -213,12 +212,13 @@
             box-sizing: border-box;
         }
 
-        /* Removido o fundo branco e a borda rígida da logo no rodapé transparente da Splash Screen */
+        /* Fundo com 20% de opacidade branca para realçar a logo sem sombreamento */
         #welcome-screen .corporate-footer {
-            background-color: transparent;
-            color: rgba(255, 255, 255, 0.85);
-            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            background-color: rgba(255, 255, 255, 0.2);
+            color: rgba(255, 255, 255, 0.95);
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: none;
+            backdrop-filter: blur(2px); /* Leve efeito de desfoque opcional para melhorar leitura */
         }
 
         .footer-logo {
@@ -226,14 +226,6 @@
             width: auto;
             display: block;
             margin: 0 auto;
-        }
-
-        /* Removidos estilos antigos que forçavam caixa branca ao redor do PNG */
-        #welcome-screen .footer-logo {
-            background: transparent;
-            padding: 0;
-            border-radius: 0;
-            box-shadow: none;
         }
 
         .footer-text {
@@ -304,7 +296,7 @@
         </div>
 
         <footer class="corporate-footer">
-            <img src="logo-montijo.png" class="footer-logo" alt="Montijo - Agricultura de Precisão e Topografia">
+            <img src="logo_montijo_back.png" class="footer-logo" alt="Montijo - Agricultura de Precisão e Topografia">
             <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
         </footer>
     </div>
@@ -338,7 +330,7 @@
         <div id="map"></div>
         
         <footer class="corporate-footer">
-            <img src="logo-montijo.png" class="footer-logo" alt="Montijo - Agricultura de Precisão e Topografia">
+            <img src="logo_montijo_back.png" class="footer-logo" alt="Montijo - Agricultura de Precisão e Topografia">
             <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
         </footer>
     </div>
