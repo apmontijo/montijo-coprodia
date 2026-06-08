@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montijo - Painel Interativo Coprodia</title>
     
-    <!-- CSS Local do QGIS2Web -->
     <link rel="stylesheet" href="css/leaflet.css">
     <link rel="stylesheet" href="css/qgis2web.css">
     
@@ -36,10 +35,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* Ajustado para conter a imagem inteira sem cortar as pontas das folhas */
-            background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.6)), url('lavoura-cana.jpg') no-repeat center center;
-            background-size: contain;
-            background-color: #0b2e18; /* Fundo reserva caso a imagem não cubra as bordas */
+            background: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.65)), url('lavoura-cana.jpg') no-repeat center center;
+            background-size: cover;
             z-index: 9999;
             display: flex;
             flex-direction: column;
@@ -48,7 +45,7 @@
             color: white;
             text-align: center;
             transition: opacity 0.8s ease, visibility 0.8s ease;
-            padding: 20px;
+            padding: 40px 20px 20px 20px;
             box-sizing: border-box;
         }
 
@@ -57,48 +54,44 @@
             visibility: hidden;
         }
 
-        /* Quadro menor para dar visibilidade ao texto de fundo */
         .welcome-content {
-            background: rgba(255, 255, 255, 0.93);
-            padding: 25px 35px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-            max-width: 420px; /* Reduzido a largura do quadro */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 500px;
             width: 100%;
             color: #333;
             border-bottom: 5px solid var(--verde-escuro);
             margin: auto 0;
         }
 
-        /* Remoção de fundo na logo Coprodia e ajuste de mesclagem */
         .welcome-logo {
-            height: 70px;
-            margin-bottom: 15px;
+            height: 80px;
+            margin-bottom: 20px;
             width: auto;
-            mix-blend-mode: multiply; /* Remove o fundo branco se a imagem tiver fundo sólido claro */
-            background: transparent !important;
         }
 
         .welcome-content h1 {
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             margin: 0 0 10px 0;
             color: var(--verde-escuro);
             font-weight: 700;
         }
 
         .welcome-content p {
-            font-size: 0.95rem;
-            color: #555;
-            margin-bottom: 25px;
-            line-height: 1.4;
+            font-size: 1rem;
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
         }
 
         .enter-btn {
             background-color: var(--verde-escuro);
             color: white;
-            border: 2px solid var(--verde-escuro);
-            padding: 12px 30px;
-            font-size: 1rem;
+            border: none;
+            padding: 14px 35px;
+            font-size: 1.1rem;
             font-weight: 600;
             border-radius: 30px;
             cursor: pointer;
@@ -112,6 +105,7 @@
         .enter-btn:hover {
             background-color: #0b5229;
             transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(15, 108, 55, 0.4);
         }
 
         /* --- CABEÇALHO DO MAPA --- */
@@ -145,7 +139,6 @@
             align-items: center;
         }
 
-        /* MODELO UNIFICADO PARA TODOS OS BOTÕES DO MENU */
         .filter-btn, .home-btn {
             background-color: transparent;
             border: 2px solid var(--verde-escuro);
@@ -159,8 +152,11 @@
             align-items: center;
             gap: 10px;
             transition: all 0.3s ease;
-            height: 38px;
-            box-sizing: border-box;
+        }
+
+        .home-btn {
+            background-color: #f0f7f3;
+            border-style: dashed;
         }
 
         .filter-btn:hover, .home-btn:hover {
@@ -168,20 +164,16 @@
             color: white;
             box-shadow: 0 4px 8px rgba(15, 108, 55, 0.2);
             transform: translateY(-2px);
+            border-style: solid;
         }
 
-        /* Garante consistência de cores nos ícones SVG e Imagens internos */
-        .home-btn svg {
-            stroke: var(--verde-escuro);
-            transition: stroke 0.3s ease;
-        }
         .home-btn:hover svg {
             stroke: white;
         }
 
         .btn-icon {
-            width: 22px;
-            height: 22px;
+            width: 24px;
+            height: 24px;
             object-fit: contain;
         }
 
@@ -201,52 +193,49 @@
             z-index: 1000;
         }
 
-        /* --- RODAPÉ CORPORATIVO ADAPTADO --- */
+        /* --- RODAPÉ CORPORATIVO MONTIJO --- */
         .corporate-footer {
             background-color: #ffffff;
             color: #555555;
-            padding: 10px 20px;
+            padding: 12px 20px;
+            text-align: center;
             font-size: 0.8rem;
             border-top: 1px solid #eaeaea;
             z-index: 2000;
             box-shadow: 0 -2px 10px rgba(0,0,0,0.03);
             display: flex;
-            flex-direction: row; /* Coloca imagem e texto lado a lado */
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            gap: 15px;
+            gap: 6px;
             width: 100%;
             box-sizing: border-box;
         }
 
         #welcome-screen .corporate-footer {
             background-color: transparent;
-            color: rgba(255, 255, 255, 0.9);
+            color: rgba(255, 255, 255, 0.85);
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: none;
         }
 
-        /* Configuração da Logo Montijo vindo ANTES do texto com borda externa */
         .footer-logo {
-            height: 38px;
+            height: 40px;
             width: auto;
-            display: inline-block;
-            box-sizing: border-box;
-            border: 15px solid #ffffff; /* Borda branca simulando os 1,5cm proporcionais */
-            background-color: #ffffff;
+            display: block;
+            margin: 0 auto;
         }
 
         #welcome-screen .footer-logo {
-            border: 15px solid #ffffff;
-            background-color: #ffffff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.95);
+            padding: 4px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
         }
 
         .footer-text {
             margin: 0;
             letter-spacing: 0.5px;
             font-weight: 500;
-            display: inline-block;
         }
 
         /* --- POP-UP CUSTOMIZADO --- */
@@ -288,15 +277,15 @@
             .logo-container img { height: 50px; margin: 0 auto; }
             .filter-menu { width: 100%; justify-content: center; gap: 10px; }
             .filter-btn, .home-btn { padding: 6px 14px; font-size: 0.85rem; flex: 1; justify-content: center; }
-            .welcome-content { padding: 20px; max-width: 90%; }
-            .corporate-footer { flex-direction: column; gap: 8px; text-align: center; font-size: 0.75rem; }
-            .footer-logo { border: 8px solid #ffffff; height: 30px; }
+            .welcome-content { padding: 25px; }
+            .welcome-content h1 { font-size: 1.5rem; }
+            .corporate-footer { font-size: 0.75rem; padding: 12px; }
+            .footer-logo { height: 32px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- TELA DE ABERTURA (SPLASH SCREEN) -->
     <div id="welcome-screen">
         <div></div>
         
@@ -310,14 +299,12 @@
             </button>
         </div>
 
-        <!-- Rodapé Corporativo Montijo (Imagem ANTES do texto) -->
         <footer class="corporate-footer">
-            <img src="logo-montijo.jpg" class="footer-logo" alt="Montijo Logo">
+            <img src="logo-montijo.jpg" class="footer-logo" alt="Montijo - Agricultura de Precisão e Topografia">
             <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
         </footer>
     </div>
 
-    <!-- CABEÇALHO DO MAPA -->
     <header class="site-header">
         <div class="logo-container">
             <a onclick="retornarParaHome()" title="Voltar para a página inicial">
@@ -326,9 +313,8 @@
         </div>
 
         <nav class="filter-menu">
-            <!-- Botão Home unificado perfeitamente com o modelo dos outros botões -->
             <button class="home-btn" onclick="retornarParaHome()" title="Voltar para a Tela Inicial">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
                 Home
             </button>
 
@@ -344,18 +330,15 @@
         </nav>
     </header>
 
-    <!-- CONTAINER DO MAPA -->
     <div class="map-container">
         <div id="map"></div>
         
-        <!-- Rodapé Interno Corporativo Montijo (Imagem ANTES do texto) -->
         <footer class="corporate-footer">
-            <img src="logo-montijo.jpg" class="footer-logo" alt="Montijo Logo">
+            <img src="logo-montijo.jpg" class="footer-logo" alt="Montijo - Agricultura de Precisão e Topografia">
             <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
         </footer>
     </div>
 
-    <!-- Scripts Leaflet e Base do QGIS -->
     <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
     <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -384,6 +367,7 @@
             tela.classList.remove('hidden');
         }
 
+        // Inicialização do Mapa Leaflet
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
         }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
