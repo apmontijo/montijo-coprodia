@@ -50,16 +50,15 @@
             visibility: hidden;
         }
 
-        /* --- CABEÇALHO SEM BACKGROUND (APENAS A LINHA VERDE SEPARADORA) --- */
+        /* --- CABEÇALHO PADRONIZADO (FUNDO PRETO 15% TRANSPARENTE + LINHA VERDE) --- */
         .site-header {
-            background: transparent !important; /* Força a remoção de qualquer cor de fundo */
-            background-color: transparent !important;
-            backdrop-filter: none !important; /* Remove o desfoque antigo */
+            background: rgba(0, 0, 0, 0.15) !important; /* Fundo preto com 15% de transparência */
+            backdrop-filter: none !important; 
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 4px solid var(--verde-escuro); /* Apenas a linha verde separando */
+            border-bottom: 4px solid var(--verde-escuro); 
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
@@ -76,27 +75,18 @@
             align-items: center;
         }
 
-        /* TÍTULO CORRIGIDO: Fonte reduzida e super destaque com sombra verde Coprodia */
+        /* TÍTULO: Sem nenhuma sombra no texto e cursor indicando clique */
         .header-title {
-            font-size: 2.5rem !important; /* Reduzido o tamanho da fonte */
+            font-size: 2.5rem !important; 
             font-weight: 700;
             color: #ffffff; 
             margin: 0;
             white-space: nowrap;
-            /* Sombra reforçada em múltiplos ângulos com o verde oficial para máxima leitura */
-            text-shadow: 
-                3px 3px 0px var(--verde-escuro),
-                -1px -1px 0px var(--verde-escuro),  
-                 1px -1px 0px var(--verde-escuro),
-                -1px  1px 0px var(--verde-escuro),
-                 1px  1px 0px var(--verde-escuro),
-                 0px  3px 5px rgba(0, 0, 0, 0.5);
+            text-shadow: none !important; /* Remoção total de sombras */
+            cursor: pointer; /* Indica que o título é clicável */
         }
 
-        .map-active .header-title {
-            color: #ffffff;
-        }
-
+        /* --- BOTÕES PADRONIZADOS DO CABEÇALHO --- */
         .filter-menu {
             display: flex;
             gap: 15px;
@@ -107,16 +97,22 @@
             background-color: rgba(255, 255, 255, 0.95);
             border: 2px solid var(--verde-escuro);
             color: var(--verde-escuro);
-            padding: 10px 24px;
             border-radius: 30px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.8rem !important; /* Tamanho da fonte reduzido em 0.8 */
             font-weight: 600;
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            gap: 8px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            
+            /* Dimensões idênticas para garantir tamanho igual entre todos os botões */
+            width: 170px !important;
+            height: 40px !important;
+            box-sizing: border-box;
+            padding: 0 10px;
         }
 
         .filter-btn:hover {
@@ -126,8 +122,8 @@
         }
 
         .btn-icon {
-            width: 24px;
-            height: 24px;
+            width: 20px;
+            height: 20px;
             object-fit: contain;
         }
 
@@ -218,7 +214,7 @@
             .site-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
             .header-brand { flex-direction: column; gap: 10px; }
             .header-title { font-size: 1.8rem !important; white-space: normal; }
-            .filter-menu { width: 100%; justify-content: center; }
+            .filter-menu { width: 100%; flex-wrap: wrap; justify-content: center; }
             #welcome-screen .site-header { position: relative; }
         }
     </style>
@@ -228,7 +224,7 @@
     <div id="welcome-screen">
         <header class="site-header">
             <div class="header-brand">
-                <h1 class="header-title">Plataforma de Gestão Territorial</h1>
+                <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
             </div>
 
             <nav class="filter-menu">
@@ -253,10 +249,15 @@
 
     <header class="site-header" id="main-header">
         <div class="header-brand">
-            <h1 class="header-title">Plataforma de Gestão Territorial</h1>
+            <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
         </div>
 
         <nav class="filter-menu">
+            <button class="filter-btn" id="btn-home" onclick="retornarParaHome()">
+                <img src="casa-vetor.jpg" class="btn-icon" alt="Home">
+                Home
+            </button>
+
             <button class="filter-btn" id="btn-agricola" onclick="alert('Mostrando talhões agrícolas de cana-de-açúcar.')">
                 <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
                 Agrícola
@@ -305,4 +306,81 @@
         function retornarParaHome() {
             var tela = document.getElementById('welcome-screen');
             tela.classList.remove('hidden');
-            document.body.classList
+            document.body.classList.remove('map-active');
+        }
+
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
+        
+        var hash = new L.Hash(map);
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        map.addLayer(layer_GoogleSatellite_0);
+
+        map.createPane('pane_2026_COPRODIA_BASE_1');
+        map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
+
+        function style_talhao() {
+            return {
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                opacity: 1,
+                color: 'rgba(248,204,35,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.2,
+                fillOpacity: 0.12,
+                fillColor: 'rgba(15,108,55,1.0)',
+                interactive: true,
+            }
+        }
+
+        var dadosGeograficos = null;
+        if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
+            dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
+        } else {
+            for (var variavel in window) {
+                if (variavel.startsWith('json_2026_COPRODIA_BASE_1') || (variavel.includes('COPRODIA') && typeof window[variavel] === 'object')) {
+                    dadosGeograficos = window[variavel];
+                    break;
+                }
+            }
+        }
+
+        if (dadosGeograficos) {
+            var layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
+                interactive: true,
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                onEachFeature: function (feature, layer) {
+                    var propriedades = feature.properties;
+                    var tituloTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || propriedades['Talhão'] || 'Dados do Talhão';
+                    
+                    var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
+                    tabelaConteudo += '<table class="custom-popup-table">';
+                    
+                    for (var chave in propriedades) {
+                        if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
+                        var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
+                        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
+                    }
+                    
+                    tabelaConteudo += '</table>';
+                    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
+                },
+                style: style_talhao,
+            });
+            map.addLayer(layer_2026_COPRODIA_BASE_1);
+        }
+    </script>
+</body>
+</html>
