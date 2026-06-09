@@ -27,6 +27,30 @@
             overflow: hidden;
         }
 
+        /* --- TELA DE BOAS-VINDAS / PÁGINA INICIAL (SPLASH SCREEN) --- */
+        #welcome-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('fundo-coprodia.png') no-repeat center center;
+            background-size: cover;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            box-sizing: border-box;
+        }
+
+        #welcome-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
         /* --- CABEÇALHO PADRONIZADO (FUNDO PRETO 35% TRANSPARENTE) --- */
         .cabecalho-padrao {
             background: rgba(0, 0, 0, 0.35) !important; 
@@ -38,9 +62,14 @@
             align-items: center;
             border-bottom: 4px solid var(--verde-escuro) !important; 
             width: 100%;
-            z-index: 10000; /* Fica acima de tudo */
+            z-index: 2000;
             box-sizing: border-box;
-            position: relative;
+        }
+
+        #welcome-screen .cabecalho-padrao {
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .header-brand {
@@ -74,159 +103,4 @@
             font-size: 0.8rem !important; 
             font-weight: 600;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            
-            width: 170px !important;
-            height: 40px !important;
-            box-sizing: border-box;
-            padding: 0 10px !important;
-        }
-
-        .filter-btn:hover {
-            background-color: var(--verde-escuro) !important;
-            color: white !important;
-            transform: translateY(-2px);
-        }
-
-        .btn-icon {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        /* --- CONTAINER PRINCIPAL E MAPA (SEMPRE ATIVO POR BAIXO) --- */
-        .map-container {
-            flex: 1;
-            display: flex; 
-            flex-direction: column;
-            position: relative;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            z-index: 2;
-            background-color: #f4f6f4;
-        }
-
-        /* --- TELA DE BOAS-VINDAS (SOBREPOSIÇÃO ABSOLUTA) --- */
-        #welcome-screen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('fundo-coprodia.png') no-repeat center center;
-            background-size: cover;
-            z-index: 5; /* Fica entre o mapa e o cabeçalho */
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-            pointer-events: auto;
-        }
-
-        #welcome-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        /* --- RODAPÉ PADRONIZADO --- */
-        .corporate-footer {
-            background-color: rgba(0, 0, 0, 0.45) !important; 
-            color: rgba(255, 255, 255, 0.85) !important; 
-            padding: 12px 20px;
-            text-align: center;
-            font-size: 0.8rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 10000; /* Sempre visível no fundo */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            box-sizing: border-box;
-            position: relative;
-        }
-
-        .footer-text {
-            margin: 0;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        /* --- POP-UP CUSTOMIZADO --- */
-        .custom-popup .leaflet-popup-content-wrapper {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 5px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        .custom-popup-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-size: 13px;
-            color: #333;
-            min-width: 220px;
-        }
-
-        .custom-popup-header {
-            background-color: var(--verde-escuro);
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            padding: 8px;
-            border-radius: 4px 4px 0 0;
-            margin-bottom: 6px;
-            font-size: 14px;
-        }
-
-        .custom-popup-table tr { border-bottom: 1px solid #eaeaea; }
-        .custom-popup-table tr:last-child { border-bottom: none; }
-        .custom-popup-table td { padding: 6px 8px; }
-        .popup-label { font-weight: 700; color: #555; width: 45%; }
-        .popup-value { text-align: right; font-weight: 500; color: #111; }
-
-        @media (max-width: 992px) {
-            .cabecalho-padrao { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
-            .header-brand { flex-direction: column; gap: 10px; }
-            .header-title { font-size: 1.8rem !important; white-space: normal; }
-            .filter-menu { width: 100%; flex-wrap: wrap; justify-content: center; }
-        }
-    </style>
-</head>
-<body>
-
-    <header class="cabecalho-padrao" id="main-header">
-        <div class="header-brand">
-            <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
-        </div>
-
-        <nav class="filter-menu">
-            <button class="filter-btn" id="btn-home" onclick="retornarParaHome()">
-                <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
-                Home
-            </button>
-
-            <button class="filter-btn" id="btn-agricola" onclick="entrarNoMapa('agricola')">
-                <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
-                Agrícola
-            </button>
-
-            <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
-                <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
-                Confinamento
-            </button>
-        </nav>
-    </header>
+            align-items:
