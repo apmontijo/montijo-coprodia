@@ -34,7 +34,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.50)), url('fundo-coprodia.png') no-repeat center center;
+            /* REMOVIDO GRADIENTE ESCURO: Imagem de fundo totalmente limpa e nítida no centro */
+            background: url('fundo-coprodia.png') no-repeat center center;
             background-size: cover;
             z-index: 9999;
             display: flex;
@@ -50,11 +51,11 @@
             visibility: hidden;
         }
 
-        /* --- CABEÇALHO PADRONIZADO (20% DE TRANSPARÊNCIA) --- */
+        /* --- CABEÇALHO PADRONIZADO (BACKGROUND APENAS AQUI) --- */
         .site-header {
-            background-color: rgba(255, 255, 255, 0.2); 
+            background-color: rgba(0, 0, 0, 0.45); /* Mantido fundo escuro translúcido para leitura dos elementos */
             backdrop-filter: blur(5px); 
-            padding: 12px 40px;
+            padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -73,27 +74,21 @@
         .header-brand {
             display: flex;
             align-items: center;
-            gap: 20px;
         }
 
-        .logo-container img {
-            height: 90px; 
-            display: block;
-            width: auto;
-        }
-
+        /* TÍTULO CORRIGIDO: Aumentado em 2x o tamanho original para máximo destaque */
         .header-title {
-            font-size: 1.8rem; 
+            font-size: 3.6rem; /* Dobro do tamanho anterior (1.8rem -> 3.6rem) */
             font-weight: 700;
             color: #ffffff; 
             margin: 0;
             white-space: nowrap;
-            text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
         }
 
+        /* Mantém o título visível na tela interna se necessário */
         .map-active .header-title {
-            color: var(--verde-escuro);
-            text-shadow: none;
+            color: #ffffff;
         }
 
         .filter-menu {
@@ -103,4 +98,282 @@
         }
 
         .filter-btn {
-            background-color: rgba(255, 255, 255, 0
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 2px solid var(--verde-escuro);
+            color: var(--verde-escuro);
+            padding: 12px 26px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+
+        .filter-btn:hover {
+            background-color: var(--verde-escuro);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .btn-icon {
+            width: 24px;
+            height: 24px;
+            object-fit: contain;
+        }
+
+        /* --- MAP CONTAINER --- */
+        .map-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            padding: 0;
+            margin: 0;
+            z-index: 1000;
+        }
+
+        /* --- RODAPÉ CORPORATIVO (BACKGROUND APENAS AQUI) --- */
+        .corporate-footer {
+            background-color: rgba(0, 0, 0, 0.45); /* Faixa escura translúcida padrão */
+            color: rgba(255, 255, 255, 0.85); 
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 0.8rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            box-sizing: border-box;
+            backdrop-filter: blur(3px);
+        }
+
+        .map-container .corporate-footer,
+        #welcome-screen .corporate-footer {
+            background-color: rgba(0, 0, 0, 0.45);
+            color: rgba(255, 255, 255, 0.85);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(3px);
+            box-shadow: none;
+        }
+
+        .footer-text {
+            margin: 0;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        /* --- POP-UP CUSTOMIZADO --- */
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 5px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+        }
+
+        .custom-popup-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 13px;
+            color: #333;
+            min-width: 220px;
+        }
+
+        .custom-popup-header {
+            background-color: var(--verde-escuro);
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px 4px 0 0;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .custom-popup-table tr { border-bottom: 1px solid #eaeaea; }
+        .custom-popup-table tr:last-child { border-bottom: none; }
+        .custom-popup-table td { padding: 6px 8px; }
+        .popup-label { font-weight: 700; color: #555; width: 45%; }
+        .popup-value { text-align: right; font-weight: 500; color: #111; }
+
+        @media (max-width: 992px) {
+            .site-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
+            .header-brand { flex-direction: column; gap: 10px; }
+            .header-title { font-size: 2.2rem; white-space: normal; }
+            .filter-menu { width: 100%; justify-content: center; }
+            #welcome-screen .site-header { position: relative; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="welcome-screen">
+        <header class="site-header">
+            <div class="header-brand">
+                <h1 class="header-title">Plataforma de Gestão Territorial</h1>
+            </div>
+
+            <nav class="filter-menu">
+                <button class="filter-btn" id="btn-agricola-welcome" onclick="entrarNoMapa('agricola')">
+                    <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
+                    Agrícola
+                </button>
+
+                <button class="filter-btn" id="btn-confinamento-welcome" onclick="entrarNoMapa('confinamento')">
+                    <img src="boi-vetor.jpg" class="btn-icon" alt="Boi">
+                    Confinamento
+                </button>
+            </nav>
+        </header>
+
+        <div></div> 
+
+        <footer class="corporate-footer">
+            <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <header class="site-header" id="main-header">
+        <div class="header-brand">
+            <h1 class="header-title">Plataforma de Gestão Territorial</h1>
+        </div>
+
+        <nav class="filter-menu">
+            <button class="filter-btn" id="btn-agricola" onclick="alert('Mostrando talhões agrícolas de cana-de-açúcar.')">
+                <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
+                Agrícola
+            </button>
+
+            <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
+                <img src="boi-vetor.jpg" class="btn-icon" alt="Boi">
+                Confinamento
+            </button>
+        </nav>
+    </header>
+
+    <div class="map-container">
+        <div id="map"></div>
+        
+        <footer class="corporate-footer">
+            <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script src="js/qgis2web_expressions.js"></script>
+    <script src="js/leaflet.js"></script>
+    <script src="js/L.Control.Layers.Tree.min.js"></script>
+    <script src="js/leaflet.rotatedMarker.js"></script>
+    <script src="js/L.Control.Locate.min.js"></script>
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    
+    <script src="data/2026_COPRODIA_BASE_1.js"></script>
+    
+    <script>
+        function entrarNoMapa(setor) {
+            var tela = document.getElementById('welcome-screen');
+            tela.classList.add('hidden');
+            document.body.classList.add('map-active');
+            
+            setTimeout(function() {
+                map.invalidateSize();
+            }, 850);
+        }
+
+        function retornarParaHome() {
+            var tela = document.getElementById('welcome-screen');
+            tela.classList.remove('hidden');
+            document.body.classList.remove('map-active');
+        }
+
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
+        
+        var hash = new L.Hash(map);
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        map.addLayer(layer_GoogleSatellite_0);
+
+        map.createPane('pane_2026_COPRODIA_BASE_1');
+        map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
+
+        function style_talhao() {
+            return {
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                opacity: 1,
+                color: 'rgba(248,204,35,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.2,
+                fillOpacity: 0.12,
+                fillColor: 'rgba(15,108,55,1.0)',
+                interactive: true,
+            }
+        }
+
+        var dadosGeograficos = null;
+        if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
+            dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
+        } else {
+            for (var variavel in window) {
+                if (variavel.startsWith('json_2026_COPRODIA_BASE_1') || (variavel.includes('COPRODIA') && typeof window[variavel] === 'object')) {
+                    dadosGeograficos = window[variavel];
+                    break;
+                }
+            }
+        }
+
+        if (dadosGeograficos) {
+            var layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
+                interactive: true,
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                onEachFeature: function (feature, layer) {
+                    var propriedades = feature.properties;
+                    var tituloTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || propriedades['Talhão'] || 'Dados do Talhão';
+                    
+                    var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
+                    tabelaConteudo += '<table class="custom-popup-table">';
+                    
+                    for (var chave in propriedades) {
+                        if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
+                        var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
+                        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
+                    }
+                    
+                    tabelaConteudo += '</table>';
+                    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
+                },
+                style: style_talhao,
+            });
+            map.addLayer(layer_2026_COPRODIA_BASE_1);
+        }
+    </script>
+</body>
+</html>
