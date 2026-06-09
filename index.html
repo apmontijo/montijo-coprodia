@@ -51,12 +51,12 @@
             pointer-events: none;
         }
 
-        /* --- ALTERAÇÃO SOLICITADA: CABEÇALHO DA PÁGINA INICIAL EM VERDE COM 25% DE TRANSPARÊNCIA --- */
+        /* --- CABEÇALHO DA PÁGINA INICIAL EM VERDE COM 25% DE TRANSPARÊNCIA --- */
         #welcome-screen .cabecalho-padrao {
             position: absolute;
             top: 0;
             left: 0;
-            background: rgba(15, 108, 55, 0.25) !important; /* Verde oficial #0f6c37 com 25% de opacidade */
+            background: rgba(15, 108, 55, 0.25) !important; /* Verde oficial com 25% de opacidade */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -67,7 +67,7 @@
             box-sizing: border-box;
         }
 
-        /* --- DEMAIS CABEÇALHOS (MANTIDOS SEM ALTERAÇÃO) --- */
+        /* --- DEMAIS CABEÇALHOS --- */
         .cabecalho-padrao {
             background: rgba(0, 0, 0, 0.45) !important; 
             backdrop-filter: none !important; 
@@ -87,10 +87,11 @@
             align-items: center;
         }
 
+        /* --- ALTERAÇÃO SOLICITADA: COR DO TÍTULO EM VERDE ESCURO OFICIAL COPRODIA --- */
         .header-title {
             font-size: 2.5rem !important; 
             font-weight: 700;
-            color: #ffffff !important; 
+            color: var(--verde-escuro) !important; /* Mudado para o verde escuro oficial #0f6c37 */
             margin: 0;
             white-space: nowrap;
             text-shadow: none !important; 
