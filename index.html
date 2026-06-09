@@ -51,7 +51,23 @@
             pointer-events: none;
         }
 
-        /* --- CABEÇALHO PADRONIZADO (45% DE TRANSPARÊNCIA) --- */
+        /* --- ALTERAÇÃO SOLICITADA: APENAS CABEÇALHO DA PÁGINA INICIAL EM VERDE COM 35% DE TRANSPARÊNCIA --- */
+        #welcome-screen .cabecalho-padrao {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(15, 108, 55, 0.65) !important; /* Verde oficial #0f6c37 com 35% de transparência (0.65 de opacidade) */
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--verde-escuro) !important; 
+            width: 100%;
+            z-index: 2000;
+            box-sizing: border-box;
+        }
+
+        /* --- DEMAIS CABEÇALHOS (MANTIDOS SEM ALTERAÇÃO) --- */
         .cabecalho-padrao {
             background: rgba(0, 0, 0, 0.45) !important; 
             backdrop-filter: none !important; 
@@ -64,12 +80,6 @@
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
-        }
-
-        #welcome-screen .cabecalho-padrao {
-            position: absolute;
-            top: 0;
-            left: 0;
         }
 
         .header-brand {
@@ -297,7 +307,6 @@
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
-        // Limites geográficos estritos da Coprodia
         var limitesCoprodia = [[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]];
 
         var map = L.map('map', {
