@@ -34,7 +34,8 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(rgba(0, 0, 0, 0.40), rgba(0, 0, 0, 0.55)), url('lavoura-cana.jpg') no-repeat center center;
+            /* Imagem de fundo alterada para fundo-coprodia.png com um gradiente suave para garantir contraste */
+            background: linear-gradient(rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.50)), url('fundo-coprodia.png') no-repeat center center;
             background-size: cover;
             z-index: 9999;
             display: flex;
@@ -52,8 +53,8 @@
 
         /* --- CABEÇALHO PADRONIZADO (20% DE TRANSPARÊNCIA) --- */
         .site-header {
-            background-color: rgba(255, 255, 255, 0.2); /* Fundo com 20% de transparência solicitado */
-            backdrop-filter: blur(5px); /* Suave desfoque para dar elegância e leitura sobre a lavoura ou mapa */
+            background-color: rgba(255, 255, 255, 0.2); 
+            backdrop-filter: blur(5px); 
             padding: 12px 40px;
             display: flex;
             justify-content: space-between;
@@ -64,7 +65,6 @@
             box-sizing: border-box;
         }
 
-        /* Força o cabeçalho a se comportar perfeitamente quando estiver fixado dentro da tela de boas-vindas */
         #welcome-screen .site-header {
             position: absolute;
             top: 0;
@@ -78,21 +78,20 @@
         }
 
         .logo-container img {
-            height: 90px; /* Tamanho médio a grande para destacar os detalhes */
+            height: 90px; 
             display: block;
             width: auto;
         }
 
         .header-title {
-            font-size: 1.8rem; /* Acompanha o tamanho robusto da marca */
+            font-size: 1.8rem; 
             font-weight: 700;
-            color: #ffffff; /* Texto branco na Splash Screen para contraste; mudará dinamicamente se necessário */
+            color: #ffffff; 
             margin: 0;
             white-space: nowrap;
             text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
         }
 
-        /* Ajuste do título quando o mapa de fundo for carregado (opcional para manter a paleta institucional verde) */
         .map-active .header-title {
             color: var(--verde-escuro);
             text-shadow: none;
@@ -149,9 +148,9 @@
             z-index: 1000;
         }
 
-        /* --- RODAPÉ ESTRUTURAL MANTIDO PARA TODAS AS PÁGINAS --- */
+        /* --- RODAPÉ ESTRUTURAL MANTIDO --- */
         .corporate-footer {
-            background-color: rgba(255, 255, 255, 0.2); /* Mantido padrão suave de 20% solicitado anteriormente */
+            background-color: rgba(255, 255, 255, 0.2); 
             color: rgba(255, 255, 255, 0.95);
             padding: 14px 20px;
             text-align: center;
@@ -167,7 +166,6 @@
             backdrop-filter: blur(2px);
         }
 
-        /* Rodapé quando fixo embaixo do mapa */
         .map-container .corporate-footer {
             background-color: #ffffff;
             color: #555555;
@@ -309,11 +307,6 @@
             
             setTimeout(function() {
                 map.invalidateSize();
-                if(setor === 'agricola') {
-                    console.log('Setor agrícola ativo');
-                } else if(setor === 'confinamento') {
-                    console.log('Setor confinamento ativo');
-                }
             }, 850);
         }
 
@@ -323,7 +316,6 @@
             document.body.classList.remove('map-active');
         }
 
-        // Inicialização do Mapa Leaflet
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
         }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
@@ -383,29 +375,14 @@
                     var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
                     tabelaConteudo += '<table class="custom-popup-table">';
                     
-                    var temDados = false;
                     for (var chave in propriedades) {
                         if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
-                        
                         var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
-                        
-                        tabelaConteudo += '<tr>';
-                        tabelaConteudo += '<td class="popup-label">' + nomeColuna + ':</td>';
-                        tabelaConteudo += '<td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td>';
-                        tabelaConteudo += '</tr>';
-                        temDados = true;
-                    }
-                    
-                    if (!temDados) {
-                        tabelaConteudo += '<tr><td class="popup-label">Código:</td><td class="popup-value">' + tituloTalhao + '</td></tr>';
+                        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
                     }
                     
                     tabelaConteudo += '</table>';
-                    
-                    layer.bindPopup(tabelaConteudo, {
-                        maxHeight: 400,
-                        className: 'custom-popup'
-                    });
+                    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
                 },
                 style: style_talhao,
             });
