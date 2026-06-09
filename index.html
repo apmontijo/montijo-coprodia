@@ -51,9 +51,9 @@
             pointer-events: none;
         }
 
-        /* --- CABEÇALHO PADRONIZADO (55% DE TRANSPARÊNCIA) --- */
+        /* --- CABEÇALHO PADRONIZADO (45% DE TRANSPARÊNCIA COMPARTILHADO) --- */
         .cabecalho-padrao {
-            background: rgba(0, 0, 0, 0.55) !important; 
+            background: rgba(0, 0, 0, 0.45) !important; 
             backdrop-filter: none !important; 
             -webkit-backdrop-filter: none !important;
             padding: 15px 40px;
@@ -152,7 +152,7 @@
             background-color: #f4f6f4;
         }
 
-        /* --- RODAPÉ --- */
+        /* --- RODAPÉ PADRONIZADO (45% DE TRANSPARÊNCIA COMPARTILHADO) --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
@@ -227,6 +227,11 @@
             </div>
 
             <nav class="filter-menu">
+                <button class="filter-btn" id="btn-home-welcome" onclick="retornarParaHome()">
+                    <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
+                    Home
+                </button>
+
                 <button class="filter-btn" id="btn-agricola-welcome" onclick="entrarNoMapa('agricola')">
                     <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
                     Agrícola
@@ -292,7 +297,6 @@
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
-        // Limites geográficos estritos da Coprodia
         var limitesCoprodia = [[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]];
 
         var map = L.map('map', {
@@ -331,7 +335,6 @@
             }
         }
 
-        // varredura dinâmica aprimorada para capturar os dados do arquivo da pasta data/ independente do nome interno gerado
         var dadosGeograficos = null;
         if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
             dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
@@ -372,7 +375,6 @@
             map.addLayer(layer_2026_COPRODIA_BASE_1);
         }
 
-        // Aplica o enquadramento inicial correto
         map.fitBounds(limitesCoprodia);
 
         function entrarNoMapa(setor) {
@@ -380,7 +382,6 @@
             tela.classList.add('hidden');
             document.body.classList.add('map-active');
             
-            // Corrige o bug de inicialização em camadas invisíveis recalculando e dando o zoom forçado na Coprodia
             setTimeout(function() {
                 map.invalidateSize();
                 map.fitBounds(limitesCoprodia);
