@@ -51,27 +51,13 @@
             pointer-events: none;
         }
 
-        /* --- ALTERAÇÃO SOLICITADA: CABEÇALHO COM 10% DE TRANSPARÊNCIA PARA MÁXIMO DESTAQUE --- */
-        #welcome-screen .cabecalho-padrao {
+        /* --- PADRONIZAÇÃO: CABEÇALHOS COM 10% DE TRANSPARÊNCIA --- */
+        #welcome-screen .cabecalho-padrao,
+        #main-header {
             position: absolute;
             top: 0;
             left: 0;
-            background: rgba(15, 108, 55, 0.10) !important; /* Verde oficial com 10% de opacidade */
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 4px solid var(--verde-escuro) !important; 
-            width: 100%;
-            z-index: 2000;
-            box-sizing: border-box;
-        }
-
-        /* --- DEMAIS CABEÇALHOS --- */
-        .cabecalho-padrao {
-            background: rgba(0, 0, 0, 0.45) !important; 
-            backdrop-filter: none !important; 
-            -webkit-backdrop-filter: none !important;
+            background: rgba(15, 108, 55, 0.10) !important; /* Verde oficial com 10% de opacidade em ambos */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -139,7 +125,7 @@
             vertical-align: middle;
         }
 
-        /* --- CONTROLE DE EXIBIÇÃO DO MAPA --- */
+        /* --- CONTROLE DE EXIBIÇÃO E AJUSTE DO MAPA --- */
         .map-container {
             flex: 1;
             display: none; 
@@ -162,7 +148,7 @@
             background-color: #f4f6f4;
         }
 
-        /* --- RODAPÉ --- */
+        /* --- PADRONIZAÇÃO DO RODAPÉ (IGUAL AO DA HOME) --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
@@ -179,10 +165,22 @@
             box-sizing: border-box;
         }
 
+        /* Rodapé interno posicionado sobre o mapa na parte inferior */
+        .map-container .corporate-footer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+        }
+
         .footer-text {
             margin: 0;
             letter-spacing: 0.5px;
             font-weight: 500;
+        }
+
+        /* Ajuste do botão de zoom do Leaflet para não sumir atrás do cabeçalho */
+        .map-container .leaflet-top {
+            top: 90px !important;
         }
 
         /* --- POP-UP CUSTOMIZADO --- */
@@ -220,16 +218,18 @@
         .popup-value { text-align: right; font-weight: 500; color: #111; }
 
         @media (max-width: 992px) {
-            .cabecalho-padrao { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
+            #welcome-screen .cabecalho-padrao,
+            #main-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; position: relative; }
             .header-brand { flex-direction: column; gap: 10px; }
             .header-title { font-size: 1.8rem !important; white-space: normal; }
             .filter-menu { width: 100%; flex-wrap: wrap; justify-content: center; }
-            #welcome-screen .cabecalho-padrao { position: relative; }
+            .map-container .leaflet-top { top: 10px !important; }
         }
     </style>
 </head>
 <body>
 
+    <!-- TELA DE BOAS-VINDAS -->
     <div id="welcome-screen">
         <header class="cabecalho-padrao">
             <div class="header-brand">
@@ -261,7 +261,8 @@
         </footer>
     </div>
 
-    <header class="cabecalho-padrao" id="main-header">
+    <!-- CABEÇALHO DO MAPA (PADRONIZADO) -->
+    <header id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
         </div>
@@ -284,6 +285,7 @@
         </nav>
     </header>
 
+    <!-- CONTAINER DO MAPA E RODAPÉ (PADRONIZADO) -->
     <div class="map-container">
         <div id="map"></div>
         
