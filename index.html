@@ -45,8 +45,8 @@
             align-items: center;
             transition: opacity 0.4s ease, visibility 0.4s ease;
             box-sizing: border-box;
-            padding-top: 170px; /* Espaço para o menu suspenso superior */
-            padding-bottom: 60px;
+            padding-top: 150px; /* Ajustado dinamicamente para os cards não sobreporem a logo central */
+            padding-bottom: 0px;
         }
 
         #welcome-screen.hidden {
@@ -55,7 +55,7 @@
             pointer-events: none;
         }
 
-        /* --- CABEÇALHOS (APENAS O TÍTULO) --- */
+        /* --- CABEÇALHOS --- */
         .cabecalho-padrao {
             position: absolute;
             top: 0;
@@ -69,6 +69,7 @@
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
+            height: 75px;
         }
 
         #main-header {
@@ -84,6 +85,7 @@
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
+            height: 75px;
         }
 
         .header-brand {
@@ -101,29 +103,29 @@
             cursor: pointer !important; 
         }
 
-        /* --- MENU FLUTUANTE CENTRALIZADO LOGO ABAIXO DO CABEÇALHO --- */
+        /* --- MENU FLUTUANTE FIXADO LOGO ABAIXO DO CABEÇALHO --- */
         .nav-container-central {
             position: absolute;
-            top: 85px; /* Fixado logo abaixo da borda do cabeçalho */
+            top: 79px; /* Posicionado perfeitamente colado logo abaixo do cabeçalho de 75px + borda de 4px */
             left: 0;
             width: 100%;
             display: flex;
             justify-content: center;
             z-index: 2500;
-            pointer-events: none; /* Não bloqueia interações com camadas inferiores */
+            pointer-events: none;
         }
 
         .filter-menu {
             display: flex;
             gap: 20px;
             align-items: center;
-            background: rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(8px);
             -webkit-backdrop-filter: blur(8px);
-            padding: 8px 30px;
+            padding: 6px 30px;
             border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            pointer-events: auto; /* Reativa cliques apenas nos botões */
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            pointer-events: auto;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
         }
 
@@ -171,6 +173,7 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            margin-bottom: 25px; /* Mantém um respiro elegante antes do rodapé */
         }
 
         .dashboard-grid {
@@ -241,6 +244,7 @@
             position: relative;
             width: 100%;
             height: 100%;
+            margin-top: 75px; /* Compensação fixa do tamanho do cabeçalho */
         }
 
         .map-active .map-container {
@@ -256,7 +260,7 @@
             background-color: #f4f6f4;
         }
 
-        /* --- RODAPÉ CORPORATIVO --- */
+        /* --- RODAPÉ CORPORATIVO ORIGINAL E PRESERVADO --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
@@ -285,7 +289,7 @@
             font-weight: 500;
         }
 
-        /* Empurra as ferramentas do Leaflet para baixo, evitando que fiquem ocultas pelo menu */
+        /* Mantém as ferramentas do Leaflet acessíveis abaixo do menu */
         .map-container .leaflet-top {
             top: 150px !important; 
         }
@@ -327,7 +331,7 @@
 
         /* RESPONSIVIDADE (CELULARES E TABLETS) */
         @media (max-width: 992px) {
-            .cabecalho-padrao, #main-header { padding: 15px; text-align: center; justify-content: center; position: relative; }
+            .cabecalho-padrao, #main-header { padding: 15px; text-align: center; justify-content: center; position: relative; height: auto; }
             .header-title { font-size: 1.8rem !important; white-space: normal; }
             .nav-container-central { position: relative; top: 0; margin: 15px 0; }
             .filter-menu { width: 90%; flex-wrap: wrap; justify-content: center; padding: 12px; }
@@ -497,17 +501,38 @@
             }
         }
 
+        // --- SISTEMA CORRIGIDO E ROBUSTO DE CAPTURA DO NOME DA FAZENDA ---
         function configurarPopUp(feature, layer) {
             var propriedades = feature.properties;
-            var nomeFazenda = 'Dados do Talhão';
+            var nomeFazenda = '';
+            
+            // Busca dinâmica por qualquer variação de campo de nome de fazenda
             for (var k in propriedades) {
                 var campoMin = k.toLowerCase().trim();
                 if (campoMin === 'nome_faz' || campoMin === 'nome faz' || campoMin === 'fazenda' || campoMin === 'nome_fazenda' || campoMin === 'nomefaz') {
                     if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
-                        nomeFazenda = propriedades[k].toString().toUpperCase();
+                        nomeFazenda = propriedades[k].toString().toUpperCase().trim();
                         break;
                     }
                 }
+            }
+            
+            // Caso não localize o nome por extenso, busca referências de IDs numéricos para não quebrar a caixa verde
+            if (nomeFazenda === '') {
+                for (var k in propriedades) {
+                    var campoMin = k.toLowerCase().trim();
+                    if (campoMin === 'faz' || campoMin === 'cod_faz' || campoMin === 'id_fazenda' || campoMin === 'id') {
+                        if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
+                            nomeFazenda = "FAZENDA " + propriedades[k].toString().toUpperCase().trim();
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Resguardo final caso o GeoJSON venha sem metadados na feição
+            if (nomeFazenda === '') {
+                nomeFazenda = 'DADOS DO TALHÃO';
             }
             
             var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
@@ -515,6 +540,7 @@
             
             for (var chave in propriedades) {
                 var chaveMin = chave.toLowerCase().trim();
+                // Oculta chaves redundantes e garante a remoção da linha "NOME FAZ" da tabela de atributos interna
                 if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda' || chaveMin === 'nomefaz') {
                     continue;
                 }
@@ -558,7 +584,6 @@
 
         // --- SISTEMA INTEGRADOR DE APIs EM TEMPO REAL ---
         async function atualizarDashboardReal() {
-            // 1. Cotação do Dólar Comercial (AwesomeAPI)
             try {
                 const responseDolar = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
                 const dadosDolar = await responseDolar.json();
@@ -581,7 +606,6 @@
                 document.getElementById('val-dolar').innerText = "Indisponível";
             }
 
-            // 2. Clima de Campo Novo do Parecis (Open-Meteo API)
             try {
                 const responseClima = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-13.67&longitude=-57.89&current_weather=true&timezone=America%2FCuiaba');
                 const dadosClima = await responseClima.json();
@@ -605,7 +629,6 @@
                 document.getElementById('val-clima').innerText = "--°C";
             }
 
-            // 3. Central de Controle Local das Commodities (Preços de Balcão / Cepea)
             const cotacoesLocais = {
                 boi: { valor: "282,50", var: "+0.45", direcao: "up" },
                 soja: { valor: "134,20", var: "-0.12", direcao: "down" },
