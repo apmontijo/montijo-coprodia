@@ -337,6 +337,7 @@
 </head>
 <body>
 
+    <!-- TELA DE BOAS-VINDAS / PAINEL INICIAL -->
     <div id="welcome-screen">
         <header class="cabecalho-padrao">
             <div class="header-brand">
@@ -361,40 +362,48 @@
             </nav>
         </header>
 
+        <!-- Div vazia para balanceamento do flexbox e preservação do espaço central da logomarca Coprodia -->
         <div></div> 
 
+        <!-- DASHBOARD ITERATIVO DE COTAÇÕES -->
         <div class="dashboard-container">
             <div class="dashboard-grid">
+                <!-- BOI GORDO -->
                 <div class="market-card">
                     <div class="card-label">Boi Gordo (@)</div>
                     <div class="card-value" id="val-boi">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
 
+                <!-- SOJA -->
                 <div class="market-card">
                     <div class="card-label">Soja (sc 60kg)</div>
                     <div class="card-value" id="val-soja">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
 
+                <!-- MILHO -->
                 <div class="market-card">
                     <div class="card-label">Milho (sc 60kg)</div>
                     <div class="card-value" id="val-milho">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
 
+                <!-- ALGODÃO -->
                 <div class="market-card">
                     <div class="card-label">Algodão (lp)</div>
                     <div class="card-value" id="val-algodao">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
 
+                <!-- DÓLAR -->
                 <div class="market-card">
                     <div class="card-label">Dólar Comercial</div>
                     <div class="card-value" id="val-dolar">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
 
+                <!-- CLIMA EM TEMPO REAL -->
                 <div class="market-card weather-card">
                     <div class="card-label">Clima C. Novo</div>
                     <div class="card-value" id="val-clima">--°C</div>
@@ -408,6 +417,7 @@
         </footer>
     </div>
 
+    <!-- CABEÇALHO DO MAPA -->
     <header id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
@@ -431,6 +441,7 @@
         </nav>
     </header>
 
+    <!-- MAPA DO PROJETO -->
     <div class="map-container">
         <div id="map"></div>
         
@@ -439,6 +450,7 @@
         </footer>
     </div>
 
+    <!-- SCRIPTS PADRÕES DO QGIS2WEB -->
     <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
     <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -451,6 +463,7 @@
     <script src="js/labelgun.min.js"></script>
     <script src="js/labels.js"></script>
     
+    <!-- BANCO DE DADOS GEOGRÁFICOS DO PROJETO -->
     <script src="data/2026_COPRODIA_BASE_1.js?v=3.0"></script>
     
     <script>
