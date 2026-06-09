@@ -50,15 +50,15 @@
             pointer-events: none;
         }
 
-        /* --- CABEÇALHOS (PADRONIZADOS COM A COR EXATA RGB 235, 247, 235) --- */
+        /* --- CABEÇALHOS GLOBAIS FIXOS --- */
         .cabecalho-padrao, #main-header {
             position: absolute;
             top: 0;
             left: 0;
             background: var(--cor-fundo-header) !important; 
-            padding: 15px 40px;
+            padding: 0 40px;
             display: flex;
-            justify-content: flex-start;
+            justify-content: space-between;
             align-items: center;
             border-bottom: 4px solid var(--verde-escuro) !important; 
             width: 100%;
@@ -82,31 +82,17 @@
             cursor: pointer !important; 
         }
 
-        /* --- MENU FLUTUANTE CENTRALIZADO LOGO ABAIXO DO CABEÇALHO --- */
+        /* --- MENUS INTERATIVOS DE BOTÕES NO TOPO SUPERIOR DIREITO --- */
         .nav-container-central {
-            position: absolute;
-            top: 75px; 
-            left: 0;
-            width: 100%;
             display: flex;
-            justify-content: center;
+            align-items: center;
             z-index: 2500;
-            pointer-events: none;
         }
 
         .filter-menu {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            padding: 8px 30px;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 255, 255, 0.25);
-            pointer-events: auto;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            margin-top: 10px;
         }
 
         .filter-btn {
@@ -115,36 +101,35 @@
             color: var(--verde-escuro) !important;
             border-radius: 30px !important;
             cursor: pointer;
-            font-size: 0.85rem !important; 
+            font-size: 0.8rem !important; 
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-            width: 170px !important;
-            height: 42px !important;
+            gap: 6px;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            width: 145px !important;
+            height: 36px !important;
             box-sizing: border-box;
-            padding: 0 10px !important;
+            padding: 0 8px !important;
         }
 
         .filter-btn:hover {
             background-color: var(--verde-escuro) !important;
             color: white !important;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(15, 108, 55, 0.3);
+            transform: translateY(-1px);
         }
 
         .btn-icon {
-            width: 20px;
-            height: 20px;
+            width: 16px;
+            height: 16px;
             object-fit: contain;
             display: inline-block;
             vertical-align: middle;
         }
 
-        /* --- DASHBOARD DE COTAÇÕES --- */
+        /* --- DASHBOARD DE COTAÇÕES (CENTRALIZADO LOGO ACIMA DO RODAPÉ) --- */
         .dashboard-container {
             position: absolute;
             bottom: 75px; 
@@ -189,14 +174,14 @@
         }
 
         .card-value {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: var(--verde-escuro);
             margin: 2px 0;
         }
 
         .card-variation {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -213,9 +198,9 @@
         }
         .weather-card .card-label { color: rgba(255, 255, 255, 0.7); }
         .weather-card .card-value { color: var(--amarelo-ouro); }
-        .weather-card .weather-desc { color: #ffffff; font-size: 11px; font-weight: 500; }
+        .weather-card .weather-desc { color: #ffffff; font-size: 10px; font-weight: 500; }
 
-        /* --- MAPA E LAYOUT --- */
+        /* --- CONTAINER DO MAPA --- */
         .map-container {
             flex: 1;
             display: none; 
@@ -223,6 +208,7 @@
             position: relative;
             width: 100%;
             height: 100%;
+            margin-top: 75px;
         }
 
         .map-active .map-container {
@@ -238,37 +224,36 @@
             background-color: #f4f6f4;
         }
 
-        /* --- RODAPÉ CORPORATIVO --- */
+        /* --- RODAPÉ ORIGINAL ABSOLUTO (FIXADO RIGOROSAMENTE NO BOTTOM) --- */
         .corporate-footer {
             position: absolute;
             bottom: 0;
             left: 0;
-            background-color: rgba(0, 0, 0, 0.45) !important; 
+            background-color: rgba(0, 0, 0, 0.55) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
-            padding: 12px 20px;
+            padding: 10px 20px;
             text-align: center;
-            font-size: 0.8rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 2000;
+            font-size: 0.75rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            z-index: 9999;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
             width: 100%;
             box-sizing: border-box;
+            height: 40px;
         }
 
         .footer-text {
             margin: 0;
             letter-spacing: 0.5px;
-            font-weight: 500;
         }
 
         .map-container .leaflet-top {
-            top: 150px !important; 
+            top: 20px !important; 
         }
 
-        /* --- POP-UP CUSTOMIZADO FIXADO --- */
+        /* --- ELEMENTOS DOS POPUPS DO LEAFLET --- */
         .custom-popup .leaflet-popup-content-wrapper {
             background: #ffffff;
             border-radius: 8px;
@@ -282,7 +267,7 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             font-size: 13px;
             color: #333;
-            min-width: 240px;
+            min-width: 250px;
         }
 
         .custom-popup-header {
@@ -305,13 +290,11 @@
 
         /* RESPONSIVIDADE */
         @media (max-width: 992px) {
-            .cabecalho-padrao, #main-header { padding: 15px; text-align: center; justify-content: center; position: relative; height: auto; }
-            .header-title { font-size: 1.8rem !important; white-space: normal; }
-            .nav-container-central { position: relative; top: 0; margin: 15px 0; }
-            .filter-menu { width: 90%; flex-wrap: wrap; justify-content: center; padding: 12px; }
-            .dashboard-container { position: relative; bottom: auto; left: auto; transform: none; width: 90%; margin: 20px auto; }
+            .cabecalho-padrao, #main-header { padding: 10px; flex-direction: column; height: auto; gap: 10px; }
+            .header-title { font-size: 1.6rem !important; white-space: normal; text-align: center; }
+            .map-container { margin-top: 120px; }
+            .dashboard-container { position: relative; bottom: auto; left: auto; transform: none; width: 95%; margin: 20px auto; }
             .dashboard-grid { grid-template-columns: repeat(3, 1fr); }
-            .map-container .leaflet-top { top: 10px !important; }
         }
 
         @media (max-width: 576px) {
@@ -321,29 +304,26 @@
 </head>
 <body>
 
-    <div class="nav-container-central">
-        <nav class="filter-menu">
-            <button class="filter-btn" id="btn-home" onclick="retornarParaHome()">
-                <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
-                Home
-            </button>
-
-            <button class="filter-btn" id="btn-agricola" onclick="entrarNoMapa('agricola')">
-                <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
-                Agrícola
-            </button>
-
-            <button class="filter-btn" id="btn-confinamento" onclick="entrarNoMapa('confinamento')">
-                <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
-                Confinamento
-            </button>
-        </nav>
-    </div>
-
     <div id="welcome-screen">
         <header class="cabecalho-padrao">
             <div class="header-brand">
                 <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
+            </div>
+            <div class="nav-container-central">
+                <nav class="filter-menu">
+                    <button class="filter-btn" id="btn-home-w" onclick="retornarParaHome()">
+                        <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
+                        Home
+                    </button>
+                    <button class="filter-btn" id="btn-agricola-w" onclick="entrarNoMapa('agricola')">
+                        <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
+                        Agrícola
+                    </button>
+                    <button class="filter-btn" id="btn-confinamento-w" onclick="entrarNoMapa('confinamento')">
+                        <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
+                        Confinamento
+                    </button>
+                </nav>
             </div>
         </header>
 
@@ -354,31 +334,26 @@
                     <div class="card-value" id="val-boi">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
-
                 <div class="market-card">
                     <div class="card-label">Soja (sc 60kg)</div>
                     <div class="card-value" id="val-soja">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
-
                 <div class="market-card">
                     <div class="card-label">Milho (sc 60kg)</div>
                     <div class="card-value" id="val-milho">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
-
                 <div class="market-card">
                     <div class="card-label">Algodão (lp)</div>
                     <div class="card-value" id="val-algodao">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
-
                 <div class="market-card">
                     <div class="card-label">Dólar Comercial</div>
                     <div class="card-value" id="val-dolar">Carregando...</div>
                     <div class="card-variation">--</div>
                 </div>
-
                 <div class="market-card weather-card">
                     <div class="card-label">Clima C. Novo</div>
                     <div class="card-value" id="val-clima">--°C</div>
@@ -395,6 +370,22 @@
     <header id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
+        </div>
+        <div class="nav-container-central">
+            <nav class="filter-menu">
+                <button class="filter-btn" id="btn-home-m" onclick="retornarParaHome()">
+                    <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
+                    Home
+                </button>
+                <button class="filter-btn" id="btn-agricola-m" onclick="entrarNoMapa('agricola')">
+                    <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
+                    Agrícola
+                </button>
+                <button class="filter-btn" id="btn-confinamento-m" onclick="entrarNoMapa('confinamento')">
+                    <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
+                    Confinamento
+                </button>
+            </nav>
         </div>
     </header>
 
@@ -473,36 +464,35 @@
             }
         }
 
-        // --- SISTEMA CORRIGIDO DE CAPTURA DO NOME DA FAZENDA ---
+        // --- SISTEMA INTEGRAÇÃO E CAPTURA DE NOME DA FAZENDA FIXADO ---
         function configurarPopUp(feature, layer) {
             var propriedades = feature.properties;
             var nomeFazenda = '';
             
-            // Procura prioritária pelo nome descritivo da fazenda
+            // Busca prioritariamente no banco de dados por campos descritivos da fazenda
             for (var k in propriedades) {
                 var campoMin = k.toLowerCase().trim();
                 if (campoMin === 'nome_faz' || campoMin === 'nome faz' || campoMin === 'fazenda' || campoMin === 'nome_fazenda' || campoMin === 'nomefaz') {
                     if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
-                        nomeFazenda = propiedades[k].toString().toUpperCase().trim();
+                        nomeFazenda = propriedades[k].toString().toUpperCase().trim();
                         break;
                     }
                 }
             }
             
-            // Se não encontrou por extenso, busca um identificador numérico/ID da fazenda para não ficar em branco
+            // Se o campo por extenso falhar, pega o código/ID identificador correspondente
             if (nomeFazenda === '') {
                 for (var k in propriedades) {
                     var campoMin = k.toLowerCase().trim();
                     if (campoMin === 'faz' || campoMin === 'cod_faz' || campoMin === 'id_fazenda') {
                         if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
-                            nomeFazenda = propriedades[k].toString().toUpperCase().trim();
+                            nomeFazenda = "FAZENDA " + propriedades[k].toString().toUpperCase().trim();
                             break;
                         }
                     }
                 }
             }
             
-            // Fallback final de segurança
             if (nomeFazenda === '') {
                 nomeFazenda = 'DADOS DO TALHÃO';
             }
@@ -512,8 +502,7 @@
             
             for (var chave in propriedades) {
                 var chaveMin = chave.toLowerCase().trim();
-                // Não repete no corpo da tabela o que já virou título do Header principal
-                if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda' || chaveMin === 'nomefaz') {
+                if (chaveMin === 'id' || propriedades[chave] === null) {
                     continue;
                 }
                 var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
@@ -554,7 +543,7 @@
             document.body.classList.remove('map-active');
         }
 
-        // --- APIS DO DASHBOARD ---
+        // --- SISTEMA INTEGRADOR DE APIS DE COTAÇÃO ---
         async function atualizarDashboardReal() {
             try {
                 const responseDolar = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
