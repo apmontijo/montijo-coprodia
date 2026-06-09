@@ -15,6 +15,7 @@
             --amarelo-ouro: #f8cc23;
             --glass-bg: rgba(255, 255, 255, 0.85);
             --glass-border: rgba(15, 108, 55, 0.2);
+            --cor-fundo-header: rgb(235, 247, 235);
         }
 
         html, body {
@@ -49,12 +50,12 @@
             pointer-events: none;
         }
 
-        /* --- CABEÇALHOS (APENAS O TÍTULO) --- */
-        .cabecalho-padrao {
+        /* --- CABEÇALHOS (PADRONIZADOS COM A COR EXATA RGB 235, 247, 235) --- */
+        .cabecalho-padrao, #main-header {
             position: absolute;
             top: 0;
             left: 0;
-            background: rgba(15, 108, 55, 0.10) !important;
+            background: var(--cor-fundo-header) !important; 
             padding: 15px 40px;
             display: flex;
             justify-content: flex-start;
@@ -63,21 +64,7 @@
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
-        }
-
-        #main-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgb(235, 247, 235) !important; 
-            padding: 15px 40px;
-            display: flex;
-            justify-content: flex-start;
-            align-items: center;
-            border-bottom: 4px solid var(--verde-escuro) !important; 
-            width: 100%;
-            z-index: 2000;
-            box-sizing: border-box;
+            height: 75px;
         }
 
         .header-brand {
@@ -86,7 +73,7 @@
         }
 
         .header-title {
-            font-size: 2.5rem !important; 
+            font-size: 2.2rem !important; 
             font-weight: 700;
             color: var(--verde-escuro) !important;
             margin: 0;
@@ -98,7 +85,7 @@
         /* --- MENU FLUTUANTE CENTRALIZADO LOGO ABAIXO DO CABEÇALHO --- */
         .nav-container-central {
             position: absolute;
-            top: 85px; /* Fixado logo abaixo da borda do cabeçalho */
+            top: 75px; 
             left: 0;
             width: 100%;
             display: flex;
@@ -119,6 +106,7 @@
             border: 1px solid rgba(255, 255, 255, 0.25);
             pointer-events: auto;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-top: 10px;
         }
 
         .filter-btn {
@@ -156,10 +144,10 @@
             vertical-align: middle;
         }
 
-        /* --- DASHBOARD DE COTAÇÕES (POSICIONADO LOGO ACIMA DO RODAPÉ CORRETO) --- */
+        /* --- DASHBOARD DE COTAÇÕES --- */
         .dashboard-container {
             position: absolute;
-            bottom: 75px; /* Alinhado dinamicamente para ficar logo acima da barra do rodapé */
+            bottom: 75px; 
             left: 50%;
             transform: translateX(-50%);
             width: 85%;
@@ -250,7 +238,7 @@
             background-color: #f4f6f4;
         }
 
-        /* --- RODAPÉ CORPORATIVO (FIXADO RIGOROSAMENTE NA BASE DA PÁGINA) --- */
+        /* --- RODAPÉ CORPORATIVO --- */
         .corporate-footer {
             position: absolute;
             bottom: 0;
@@ -276,12 +264,11 @@
             font-weight: 500;
         }
 
-        /* Empurra as ferramentas do Leaflet para baixo, evitando que fiquem ocultas pelo menu */
         .map-container .leaflet-top {
             top: 150px !important; 
         }
 
-        /* --- POP-UP CUSTOMIZADO --- */
+        /* --- POP-UP CUSTOMIZADO FIXADO --- */
         .custom-popup .leaflet-popup-content-wrapper {
             background: #ffffff;
             border-radius: 8px;
@@ -316,9 +303,9 @@
         .popup-label { font-weight: 700; color: #555; width: 40%; text-transform: uppercase; font-size: 11px; }
         .popup-value { text-align: right; font-weight: 500; color: #111; }
 
-        /* RESPONSIVIDADE (CELULARES E TABLETS) */
+        /* RESPONSIVIDADE */
         @media (max-width: 992px) {
-            .cabecalho-padrao, #main-header { padding: 15px; text-align: center; justify-content: center; position: relative; }
+            .cabecalho-padrao, #main-header { padding: 15px; text-align: center; justify-content: center; position: relative; height: auto; }
             .header-title { font-size: 1.8rem !important; white-space: normal; }
             .nav-container-central { position: relative; top: 0; margin: 15px 0; }
             .filter-menu { width: 90%; flex-wrap: wrap; justify-content: center; padding: 12px; }
@@ -486,17 +473,38 @@
             }
         }
 
+        // --- SISTEMA CORRIGIDO DE CAPTURA DO NOME DA FAZENDA ---
         function configurarPopUp(feature, layer) {
             var propriedades = feature.properties;
-            var nomeFazenda = 'Dados do Talhão';
+            var nomeFazenda = '';
+            
+            // Procura prioritária pelo nome descritivo da fazenda
             for (var k in propriedades) {
                 var campoMin = k.toLowerCase().trim();
                 if (campoMin === 'nome_faz' || campoMin === 'nome faz' || campoMin === 'fazenda' || campoMin === 'nome_fazenda' || campoMin === 'nomefaz') {
                     if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
-                        nomeFazenda = propriedades[k].toString().toUpperCase();
+                        nomeFazenda = propiedades[k].toString().toUpperCase().trim();
                         break;
                     }
                 }
+            }
+            
+            // Se não encontrou por extenso, busca um identificador numérico/ID da fazenda para não ficar em branco
+            if (nomeFazenda === '') {
+                for (var k in propriedades) {
+                    var campoMin = k.toLowerCase().trim();
+                    if (campoMin === 'faz' || campoMin === 'cod_faz' || campoMin === 'id_fazenda') {
+                        if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
+                            nomeFazenda = propriedades[k].toString().toUpperCase().trim();
+                            break;
+                        }
+                    }
+                }
+            }
+            
+            // Fallback final de segurança
+            if (nomeFazenda === '') {
+                nomeFazenda = 'DADOS DO TALHÃO';
             }
             
             var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
@@ -504,6 +512,7 @@
             
             for (var chave in propriedades) {
                 var chaveMin = chave.toLowerCase().trim();
+                // Não repete no corpo da tabela o que já virou título do Header principal
                 if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda' || chaveMin === 'nomefaz') {
                     continue;
                 }
@@ -545,7 +554,7 @@
             document.body.classList.remove('map-active');
         }
 
-        // --- SISTEMA INTEGRADOR DE APIs EM TEMPO REAL ---
+        // --- APIS DO DASHBOARD ---
         async function atualizarDashboardReal() {
             try {
                 const responseDolar = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
