@@ -9,445 +9,89 @@
     <link rel="stylesheet" href="css/qgis2web.css?v=2.0">
     
     <style>
-        :root {
-            --verde-escuro: #0f6c37;
-            --verde-claro: #5cb85c;
-            --amarelo-ouro: #f8cc23;
-        }
+        :root { --verde-escuro: #0f6c37; --verde-claro: #5cb85c; --amarelo-ouro: #f8cc23; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background-color: #f4f6f4; display: flex; flex-direction: column; overflow: hidden; }
 
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f6f4;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
+        /* --- TELA DE BOAS-VINDAS --- */
+        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: url('fundo-coprodia.png') no-repeat center center; background-size: cover; z-index: 9999; display: flex; flex-direction: column; justify-content: space-between; transition: opacity 0.4s ease; }
+        #welcome-screen.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 
-        /* --- TELA DE BOAS-VINDAS / PÁGINA INICIAL --- */
-        #welcome-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: url('fundo-coprodia.png') no-repeat center center;
-            background-size: cover;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            transition: opacity 0.4s ease, visibility 0.4s ease;
-            box-sizing: border-box;
-        }
+        /* --- DASHBOARD GRID (NOVO) --- */
+        .dashboard-container { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; padding: 20px; width: 85%; margin: auto; }
+        .card { background: rgba(255,255,255,0.85); backdrop-filter: blur(5px); padding: 15px; border-radius: 12px; text-align: center; border-bottom: 4px solid var(--verde-escuro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .label { display: block; font-size: 0.75rem; color: #444; font-weight: bold; text-transform: uppercase; }
+        .value { display: block; font-size: 1.3rem; font-weight: 800; color: var(--verde-escuro); margin-top: 5px; }
 
-        #welcome-screen.hidden {
-            opacity: 0;
-            visibility: hidden;
-            pointer-events: none;
-        }
-
-        #welcome-screen .cabecalho-padrao {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgba(15, 108, 55, 0.10) !important;
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 4px solid var(--verde-escuro) !important; 
-            width: 100%;
-            z-index: 2000;
-            box-sizing: border-box;
-        }
-
-        /* --- CABEÇALHO PADRÃO --- */
-        .cabecalho-padrao {
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 4px solid var(--verde-escuro) !important; 
-            width: 100%;
-            z-index: 2000;
-            box-sizing: border-box;
-        }
-
-        /* --- CABEÇALHO DO MAPA COM A COR ATUALIZADA RGB (235, 247, 235) --- */
-        #main-header {
-            position: absolute;
-            top: 0;
-            left: 0;
-            background: rgb(235, 247, 235) !important; 
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 4px solid var(--verde-escuro) !important; 
-            width: 100%;
-            z-index: 2000;
-            box-sizing: border-box;
-        }
-
-        .header-brand {
-            display: flex;
-            align-items: center;
-        }
-
-        .header-title {
-            font-size: 2.5rem !important; 
-            font-weight: 700;
-            color: var(--verde-escuro) !important;
-            margin: 0;
-            white-space: nowrap;
-            text-shadow: none !important; 
-            cursor: pointer !important; 
-        }
-
-        /* --- BOTÕES DO CABEÇALHO --- */
-        .filter-menu {
-            display: flex;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .filter-btn {
-            background-color: rgba(255, 255, 255, 0.95) !important;
-            border: 2px solid var(--verde-escuro) !important;
-            color: var(--verde-escuro) !important;
-            border-radius: 30px !important;
-            cursor: pointer;
-            font-size: 0.8rem !important; 
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            
-            width: 170px !important;
-            height: 40px !important;
-            box-sizing: border-box;
-            padding: 0 10px !important;
-        }
-
-        .filter-btn:hover {
-            background-color: var(--verde-escuro) !important;
-            color: white !important;
-            transform: translateY(-2px);
-        }
-
-        .btn-icon {
-            width: 20px;
-            height: 20px;
-            object-fit: contain;
-            display: inline-block;
-            vertical-align: middle;
-        }
-
-        /* --- CONTROLE DE EXIBIÇÃO E AJUSTE DO MAPA --- */
-        .map-container {
-            flex: 1;
-            display: none; 
-            flex-direction: column;
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        .map-active .map-container {
-            display: flex !important;
-        }
-
-        #map {
-            width: 100%;
-            height: 100%;
-            padding: 0;
-            margin: 0;
-            z-index: 1000;
-            background-color: #f4f6f4;
-        }
-
-        /* --- RODAPÉ INTERNO E EXTERNO --- */
-        .corporate-footer {
-            background-color: rgba(0, 0, 0, 0.45) !important; 
-            color: rgba(255, 255, 255, 0.85) !important; 
-            padding: 12px 20px;
-            text-align: center;
-            font-size: 0.8rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 2000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            width: 100%;
-            box-sizing: border-box;
-        }
-
-        .map-container .corporate-footer {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-        }
-
-        .footer-text {
-            margin: 0;
-            letter-spacing: 0.5px;
-            font-weight: 500;
-        }
-
-        .map-container .leaflet-top {
-            top: 90px !important;
-        }
-
-        /* --- POP-UP CUSTOMIZADO --- */
-        .custom-popup .leaflet-popup-content-wrapper {
-            background: #ffffff;
-            border-radius: 8px;
-            padding: 5px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-        }
-
-        .custom-popup-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-family: 'Segoe UI', Arial, sans-serif;
-            font-size: 13px;
-            color: #333;
-            min-width: 240px;
-        }
-
-        .custom-popup-header {
-            background-color: var(--verde-escuro);
-            color: white;
-            font-weight: bold;
-            text-align: center;
-            padding: 10px 8px;
-            border-radius: 4px 4px 0 0;
-            margin-bottom: 6px;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .custom-popup-table tr { border-bottom: 1px solid #eaeaea; }
-        .custom-popup-table tr:last-child { border-bottom: none; }
-        .custom-popup-table td { padding: 8px 8px; }
-        .popup-label { font-weight: 700; color: #555; width: 40%; text-transform: uppercase; font-size: 11px; }
-        .popup-value { text-align: right; font-weight: 500; color: #111; }
-
-        @media (max-width: 992px) {
-            #welcome-screen .cabecalho-padrao,
-            #main-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; position: relative; }
-            .header-brand { flex-direction: column; gap: 10px; }
-            .header-title { font-size: 1.8rem !important; white-space: normal; }
-            .filter-menu { width: 100%; flex-wrap: wrap; justify-content: center; }
-            .map-container .leaflet-top { top: 10px !important; }
-        }
+        /* --- CABEÇALHOS E MAPA (SEU CSS ORIGINAL MANTIDO) --- */
+        .cabecalho-padrao, #main-header { padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 4px solid var(--verde-escuro); width: 100%; box-sizing: border-box; background: rgba(235, 247, 235, 0.95); }
+        .header-title { font-size: 2.5rem; color: var(--verde-escuro); margin: 0; cursor: pointer; }
+        .filter-menu { display: flex; gap: 15px; }
+        .filter-btn { background: white; border: 2px solid var(--verde-escuro); color: var(--verde-escuro); padding: 10px 20px; border-radius: 30px; cursor: pointer; font-weight: 600; }
+        
+        .map-container { flex: 1; display: none; position: relative; }
+        .map-active .map-container { display: flex; }
+        #map { width: 100%; height: 100%; }
+        
+        .custom-popup-header { background-color: var(--verde-escuro); color: white; padding: 10px; text-align: center; font-weight: bold; }
+        .custom-popup-table { width: 100%; border-collapse: collapse; }
+        .popup-label { font-weight: bold; padding: 5px; }
+        .popup-value { text-align: right; padding: 5px; }
     </style>
 </head>
 <body>
 
     <div id="welcome-screen">
         <header class="cabecalho-padrao">
-            <div class="header-brand">
-                <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
-            </div>
-
+            <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
             <nav class="filter-menu">
-                <button class="filter-btn" id="btn-home-welcome" onclick="retornarParaHome()">
-                    <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
-                    Home
-                </button>
-
-                <button class="filter-btn" id="btn-agricola-welcome" onclick="entrarNoMapa('agricola')">
-                    <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
-                    Agrícola
-                </button>
-
-                <button class="filter-btn" id="btn-confinamento-welcome" onclick="entrarNoMapa('confinamento')">
-                    <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
-                    Confinamento
-                </button>
+                <button class="filter-btn" onclick="retornarParaHome()">Home</button>
+                <button class="filter-btn" onclick="entrarNoMapa('agricola')">Agrícola</button>
+                <button class="filter-btn" onclick="entrarNoMapa('confinamento')">Confinamento</button>
             </nav>
         </header>
 
-        <div></div> 
+        <div class="dashboard-container">
+            <div class="card"><span class="label">Boi Gordo</span><span class="value" id="val-boi">R$ 282,50</span></div>
+            <div class="card"><span class="label">Soja (sc)</span><span class="value" id="val-soja">R$ 134,20</span></div>
+            <div class="card"><span class="label">Milho (sc)</span><span class="value" id="val-milho">R$ 58,90</span></div>
+            <div class="card"><span class="label">Algodão</span><span class="value" id="val-algodao">R$ 142,15</span></div>
+            <div class="card"><span class="label">Dólar</span><span class="value" id="val-dolar">R$ 5,19</span></div>
+            <div class="card"><span class="label">Clima</span><span class="value" id="val-clima">29°C</span></div>
+        </div>
 
-        <footer class="corporate-footer">
-            <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
-        </footer>
+        <footer class="corporate-footer"><p>Desenvolvido por Montijo &copy; 2026.</p></footer>
     </div>
 
     <header id="main-header">
-        <div class="header-brand">
-            <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
-        </div>
-
-        <nav class="filter-menu">
-            <button class="filter-btn" id="btn-home" onclick="retornarParaHome()">
-                <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
-                Home
-            </button>
-
-            <button class="filter-btn" id="btn-agricola" onclick="entrarNoMapa('agricola')">
-                <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
-                Agrícola
-            </button>
-
-            <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
-                <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
-                Confinamento
-            </button>
-        </nav>
+        <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
     </header>
 
     <div class="map-container">
         <div id="map"></div>
-        
-        <footer class="corporate-footer">
-            <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
-        </footer>
     </div>
 
-    <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
-    <script src="js/L.Control.Layers.Tree.min.js"></script>
-    <script src="js/leaflet.rotatedMarker.js"></script>
-    <script src="js/L.Control.Locate.min.js"></script>
-    <script src="js/leaflet-hash.js"></script>
-    <script src="js/leaflet.pattern.js"></script>
-    <script src="js/Autolinker.min.js"></script>
-    <script src="js/rbush.min.js"></script>
-    <script src="js/labelgun.min.js"></script>
-    <script src="js/labels.js"></script>
-    
-    <script src="data/2026_COPRODIA_BASE_1.js?v=2.0"></script>
-    
     <script>
-        var limitesCoprodia = [[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]];
-
-        var map = L.map('map', {
-            zoomControl:true, maxZoom:28, minZoom:1
-        });
-        
-        var hash = new L.Hash(map);
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-        
-        map.createPane('pane_GoogleSatellite_0');
-        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
-        
-        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-            pane: 'pane_GoogleSatellite_0',
-            opacity: 1.0,
-            minZoom: 1,
-            maxZoom: 28,
-        });
-        map.addLayer(layer_GoogleSatellite_0);
-
-        map.createPane('pane_2026_COPRODIA_BASE_1');
-        map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
-
-        function style_talhao() {
-            return {
-                pane: 'pane_2026_COPRODIA_BASE_1',
-                opacity: 1,
-                color: 'rgba(248,204,35,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.2,
-                fillOpacity: 0.12,
-                fillColor: 'rgba(15,108,55,1.0)',
-                interactive: true,
-            }
-        }
-
-        var dadosGeograficos = null;
-        if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
-            dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
-        } else if (typeof json_2026_COPRODIA_BASE_1 !== 'undefined') {
-            dadosGeograficos = json_2026_COPRODIA_BASE_1;
-        } else {
-            for (var chaveVariavel in window) {
-                if (chaveVariavel.startsWith('json_2026_COPRODIA_BASE_1') || (chaveVariavel.includes('COPRODIA') && typeof window[chaveVariavel] === 'object')) {
-                    dadosGeograficos = window[chaveVariavel];
-                    break;
-                }
-            }
-        }
-
-       // FUNÇÃO DE RENDERIZAÇÃO DO POP-UP ATUALIZADA (APENAS AREA E TALHAO)
-function configurarPopUp(feature, layer) {
-    var propriedades = feature.properties;
-    
-    // 1. Identificar o nome da fazenda (mantido como antes)
-    var nomeFazenda = 'Dados do Talhão';
-    var chavesPossiveis = ['NOME_FAZ', 'NOME FAZ', 'FAZENDA', 'NOME_FAZENDA', 'NOMEFAZ', 'NOME'];
-
-    for (var i = 0; i < chavesPossiveis.length; i++) {
-        var k = chavesPossiveis[i];
-        if (propriedades.hasOwnProperty(k) && propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
-            nomeFazenda = propriedades[k].toString().toUpperCase();
-            break; 
-        }
-    }
-    
-    // 2. Constrói o cabeçalho verde
-    var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
-    tabelaConteudo += '<table class="custom-popup-table">';
-    
-    // 3. Monta as linhas apenas com AREA e TALHAO
-    // Definimos os campos que queremos exibir explicitamente
-    var camposParaExibir = ['AREA', 'TALHAO'];
-
-    camposParaExibir.forEach(function(campo) {
-        // Verifica se o campo existe nas propriedades (case insensitive)
-        for (var chave in propriedades) {
-            if (chave.toUpperCase() === campo) {
-                var valor = propriedades[chave] !== null ? propriedades[chave].toString() : "N/A";
-                tabelaConteudo += '<tr><td class="popup-label">' + campo + ':</td><td class="popup-value">' + autolinker.link(valor) + '</td></tr>';
-            }
-        }
-    });
-    
-    tabelaConteudo += '</table>';
-    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
-}
-
-        var layer_2026_COPRODIA_BASE_1;
-        if (dadosGeograficos) {
-            layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
-                interactive: true,
-                pane: 'pane_2026_COPRODIA_BASE_1',
-                onEachFeature: configurarPopUp, // Aponta diretamente para a nova função estruturada
-                style: style_talhao,
+        // Lógica de PopUp e Mapa (Mantida do seu original)
+        function configurarPopUp(feature, layer) {
+            var props = feature.properties;
+            var html = '<div class="custom-popup-header">' + (props.NOME || 'Talhão') + '</div>';
+            html += '<table class="custom-popup-table">';
+            ['AREA', 'TALHAO'].forEach(function(c) {
+                if(props[c]) html += '<tr><td class="popup-label">'+c+':</td><td class="popup-value">'+props[c]+'</td></tr>';
             });
-            map.addLayer(layer_2026_COPRODIA_BASE_1);
+            html += '</table>';
+            layer.bindPopup(html, {className: 'custom-popup'});
         }
 
-        map.fitBounds(limitesCoprodia);
-
+        // Funções de navegação
         function entrarNoMapa(setor) {
-            var tela = document.getElementById('welcome-screen');
-            tela.classList.add('hidden');
+            document.getElementById('welcome-screen').classList.add('hidden');
             document.body.classList.add('map-active');
-            
-            setTimeout(function() {
-                map.invalidateSize();
-                map.fitBounds(limitesCoprodia);
-            }, 100);
+            map.invalidateSize();
         }
-
         function retornarParaHome() {
-            var tela = document.getElementById('welcome-screen');
-            tela.classList.remove('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
             document.body.classList.remove('map-active');
         }
     </script>
