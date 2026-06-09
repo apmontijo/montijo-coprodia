@@ -663,5 +663,13 @@
         // Inicialização do carregamento assíncrono
         window.onload = atualizarDashboardReal;
     </script>
+    <div id="modal-dolar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:30px; border-radius:15px; text-align:center; max-width: 400px; width: 90%; font-family: sans-serif;">
+        <h3 style="color: #0f6c37;">Dólar Comercial em Tempo Real</h3>
+        <p style="font-size: 2.5rem; color: #0f6c37; font-weight: bold; margin: 10px 0;" id="modal-val-dolar">Carregando...</p>
+        <p id="modal-info-dolar" style="color: #555;"></p>
+        <button onclick="document.getElementById('modal-dolar').style.display='none'" style="margin-top:20px; padding:10px 20px; background:#0f6c37; color:white; border:none; border-radius:5px; cursor:pointer;">Fechar</button>
+    </div>
+</div>
 </body>
 </html>
