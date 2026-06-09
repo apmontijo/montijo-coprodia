@@ -2,108 +2,83 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Montijo - Painel Interativo Coprodia</title>
-    
-    <link rel="stylesheet" href="css/leaflet.css?v=3.0">
-    <link rel="stylesheet" href="css/qgis2web.css?v=3.0">
-    
+    <title>Montijo - Painel Interativo</title>
     <style>
-        :root {
-            --verde-escuro: #0f6c37;
-            --verde-claro: #5cb85c;
-            --amarelo-ouro: #f8cc23;
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: rgba(15, 108, 55, 0.2);
-        }
+        /* CSS Otimizado para garantir o layout */
+        :root { --verde-escuro: #0f6c37; }
+        
+        body, html { margin: 0; padding: 0; height: 100%; font-family: sans-serif; overflow: hidden; }
 
-        html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: 'Segoe UI', sans-serif; background-color: #f4f6f4; overflow: hidden; }
-
-        /* --- TELA DE BOAS-VINDAS --- */
         #welcome-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: url('fundo-coprodia.png') no-repeat center center;
-            background-size: cover; z-index: 9999;
-            display: flex; flex-direction: column; align-items: center;
+            background-size: cover;
+            display: grid;
+            /* Layout: Cabeçalho, Botões, Espaço, Rodapé */
+            grid-template-rows: auto auto 1fr auto; 
+            z-index: 9999;
         }
 
-        /* Cabeçalho e Linha Verde */
-        .top-bar-wrapper {
-            width: 100%;
-            background: rgba(235, 247, 235, 0.95);
+        /* 1. Cabeçalho */
+        .top-header { 
+            background: rgba(235, 247, 235, 0.95); 
+            padding: 20px 40px; 
             border-bottom: 4px solid var(--verde-escuro);
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-sizing: border-box;
+            display: flex; justify-content: space-between; align-items: center;
         }
 
-        .header-title { font-size: 2rem; color: var(--verde-escuro); margin: 0; }
-
-        /* Botões movidos para o topo */
-        .filter-menu { display: flex; gap: 15px; }
-        .filter-btn {
-            background: white; border: 2px solid var(--verde-escuro); color: var(--verde-escuro);
-            padding: 8px 20px; border-radius: 30px; cursor: pointer; font-weight: 600;
+        /* 2. Botões (Ficam logo abaixo da linha verde) */
+        .button-bar { 
+            background: rgba(255,255,255,0.9); 
+            padding: 10px 40px; 
+            display: flex; gap: 20px;
         }
 
-        /* Dashboard Centralizado */
-        .dashboard-container { margin-top: auto; margin-bottom: auto; width: 90%; max-width: 1100px; }
-        .dashboard-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
-        .market-card { background: var(--glass-bg); border-radius: 12px; padding: 12px; text-align: center; }
-
-        /* Rodapé fixo na parte inferior */
-        .corporate-footer {
-            position: absolute; bottom: 0; left: 0; width: 100%;
-            background-color: rgba(0, 0, 0, 0.6); color: white;
+        /* 3. Dashboard Central */
+        .dashboard-container { padding: 40px; }
+        
+        /* 4. Rodapé (Fixo no fim da página) */
+        .footer-fixed { 
+            background: rgba(0,0,0,0.6); color: white; 
             padding: 15px; text-align: center; font-size: 0.8rem;
         }
 
-        #map { width: 100%; height: 100%; }
-        .map-container { display: none; width: 100%; height: 100%; }
-        .map-active .map-container { display: block; }
-        .map-active #welcome-screen { display: none; }
+        #welcome-screen.hidden { display: none; }
     </style>
 </head>
 <body>
 
     <div id="welcome-screen">
-        <!-- Topo: Título e Botões -->
-        <header class="top-bar-wrapper">
-            <h1 class="header-title">Plataforma de Gestão Territorial</h1>
-            <nav class="filter-menu">
-                <button class="filter-btn" onclick="retornarParaHome()">Home</button>
-                <button class="filter-btn" onclick="entrarNoMapa('agricola')">Agrícola</button>
-                <button class="filter-btn" onclick="alert('Confinamento')">Confinamento</button>
-            </nav>
+        <header class="top-header">
+            <h1 class="header-title" style="color: var(--verde-escuro); margin:0;">Plataforma de Gestão Territorial</h1>
         </header>
 
+        <nav class="button-bar">
+            <button onclick="retornarParaHome()">Home</button>
+            <button onclick="entrarNoMapa()">Agrícola</button>
+            <button onclick="alert('Confinamento')">Confinamento</button>
+        </nav>
+
         <div class="dashboard-container">
-            <div class="dashboard-grid">
-                <!-- Cards de Cotação -->
-                <div class="market-card"><div class="card-label">Boi Gordo</div><div class="card-value" id="val-boi">--</div></div>
-                <div class="market-card"><div class="card-label">Soja</div><div class="card-value" id="val-soja">--</div></div>
-                <div class="market-card"><div class="card-label">Milho</div><div class="card-value" id="val-milho">--</div></div>
-                <div class="market-card"><div class="card-label">Algodão</div><div class="card-value" id="val-algodao">--</div></div>
-                <div class="market-card"><div class="card-label">Dólar</div><div class="card-value" id="val-dolar">--</div></div>
-                <div class="market-card weather-card"><div class="card-label">Clima</div><div class="card-value" id="val-clima">--</div></div>
-            </div>
+            <p style="color: white; font-weight: bold;">Dashboard de Cotações em tempo real...</p>
         </div>
 
-        <footer class="corporate-footer">
-            <p>Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
+        <footer class="footer-fixed">
+            Desenvolvido por Montijo &copy; 2026.
         </footer>
     </div>
 
-    <div class="map-container">
-        <div id="map"></div>
-    </div>
+    <div id="map" style="display:none; height: 100vh;"></div>
 
     <script>
-        // Funções de navegação mantidas
-        function entrarNoMapa(setor) { document.body.classList.add('map-active'); }
-        function retornarParaHome() { document.body.classList.remove('map-active'); }
+        function entrarNoMapa() {
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('map').style.display = 'block';
+        }
+        function retornarParaHome() {
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('map').style.display = 'none';
+        }
     </script>
 </body>
 </html>
