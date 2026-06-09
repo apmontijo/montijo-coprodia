@@ -51,13 +51,40 @@
             pointer-events: none;
         }
 
-        /* --- PADRONIZAÇÃO: CABEÇALHOS COM 10% DE TRANSPARÊNCIA --- */
-        #welcome-screen .cabecalho-padrao,
+        #welcome-screen .cabecalho-padrao {
+            position: absolute;
+            top: 0;
+            left: 0;
+            background: rgba(15, 108, 55, 0.10) !important;
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--verde-escuro) !important; 
+            width: 100%;
+            z-index: 2000;
+            box-sizing: border-box;
+        }
+
+        /* --- CABEÇALHO PADRÃO --- */
+        .cabecalho-padrao {
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 4px solid var(--verde-escuro) !important; 
+            width: 100%;
+            z-index: 2000;
+            box-sizing: border-box;
+        }
+
+        /* --- ALTERAÇÃO SOLICITADA: GRADIENTE EXCLUSIVO DO CABEÇALHO DO MAPA --- */
         #main-header {
             position: absolute;
             top: 0;
             left: 0;
-            background: rgba(15, 108, 55, 0.10) !important; /* Verde oficial com 10% de opacidade em ambos */
+            /* Gradiente: Verde claro na esquerda (0%), transiciona para o branco no meio (50%) e segue estável em branco até a direita (100%) */
+            background: linear-gradient(to right, var(--verde-claro) 0%, #ffffff 50%, #ffffff 100%) !important;
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -76,7 +103,7 @@
         .header-title {
             font-size: 2.5rem !important; 
             font-weight: 700;
-            color: var(--verde-escuro) !important; /* Verde escuro oficial #0f6c37 */
+            color: var(--verde-escuro) !important;
             margin: 0;
             white-space: nowrap;
             text-shadow: none !important; 
@@ -148,7 +175,7 @@
             background-color: #f4f6f4;
         }
 
-        /* --- PADRONIZAÇÃO DO RODAPÉ (IGUAL AO DA HOME) --- */
+        /* --- RODAPÉ INTERNO E EXTERNO --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
@@ -165,7 +192,6 @@
             box-sizing: border-box;
         }
 
-        /* Rodapé interno posicionado sobre o mapa na parte inferior */
         .map-container .corporate-footer {
             position: absolute;
             bottom: 0;
@@ -178,7 +204,6 @@
             font-weight: 500;
         }
 
-        /* Ajuste do botão de zoom do Leaflet para não sumir atrás do cabeçalho */
         .map-container .leaflet-top {
             top: 90px !important;
         }
@@ -220,6 +245,7 @@
         @media (max-width: 992px) {
             #welcome-screen .cabecalho-padrao,
             #main-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; position: relative; }
+            #main-header { background: var(--verde-claro) !important; } /* Simplifica em telas mobile */
             .header-brand { flex-direction: column; gap: 10px; }
             .header-title { font-size: 1.8rem !important; white-space: normal; }
             .filter-menu { width: 100%; flex-wrap: wrap; justify-content: center; }
@@ -261,7 +287,7 @@
         </footer>
     </div>
 
-    <!-- CABEÇALHO DO MAPA (PADRONIZADO) -->
+    <!-- CABEÇALHO DO MAPA (COM O NOVO GRADIENTE DA LOGO) -->
     <header id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
@@ -285,7 +311,7 @@
         </nav>
     </header>
 
-    <!-- CONTAINER DO MAPA E RODAPÉ (PADRONIZADO) -->
+    <!-- CONTAINER DO MAPA E RODAPÉ -->
     <div class="map-container">
         <div id="map"></div>
         
