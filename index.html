@@ -50,15 +50,16 @@
             visibility: hidden;
         }
 
-        /* --- CABEÇALHO PADRONIZADO (FUNDO PRETO 15% TRANSPARENTE + LINHA VERDE) --- */
+        /* --- NOVO CABEÇALHO PADRONIZADO (FUNDO PRETO 15% E LINHA VERDE) --- */
         .site-header {
             background: rgba(0, 0, 0, 0.15) !important; /* Fundo preto com 15% de transparência */
             backdrop-filter: none !important; 
+            -webkit-backdrop-filter: none !important;
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 4px solid var(--verde-escuro); 
+            border-bottom: 4px solid var(--verde-escuro) !important; 
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
@@ -75,18 +76,18 @@
             align-items: center;
         }
 
-        /* TÍTULO: Sem nenhuma sombra no texto e cursor indicando clique */
+        /* TÍTULO PADRONIZADO: Sem sombras e com clique ativo para voltar à Home */
         .header-title {
             font-size: 2.5rem !important; 
             font-weight: 700;
-            color: #ffffff; 
+            color: #ffffff !important; 
             margin: 0;
             white-space: nowrap;
-            text-shadow: none !important; /* Remoção total de sombras */
-            cursor: pointer; /* Indica que o título é clicável */
+            text-shadow: none !important; /* Remoção absoluta de sombras antigas */
+            cursor: pointer !important; /* Garante o visual de link clicável */
         }
 
-        /* --- BOTÕES PADRONIZADOS DO CABEÇALHO --- */
+        /* --- BOTÕES PADRONIZADOS E SIMÉTRICOS --- */
         .filter-menu {
             display: flex;
             gap: 15px;
@@ -94,12 +95,12 @@
         }
 
         .filter-btn {
-            background-color: rgba(255, 255, 255, 0.95);
-            border: 2px solid var(--verde-escuro);
-            color: var(--verde-escuro);
-            border-radius: 30px;
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            border: 2px solid var(--verde-escuro) !important;
+            color: var(--verde-escuro) !important;
+            border-radius: 30px !important;
             cursor: pointer;
-            font-size: 0.8rem !important; /* Tamanho da fonte reduzido em 0.8 */
+            font-size: 0.8rem !important; /* Tamanho reduzido em 0.8 */
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -108,16 +109,16 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             
-            /* Dimensões idênticas para garantir tamanho igual entre todos os botões */
+            /* Tamanho fixo e idêntico para todos os botões */
             width: 170px !important;
             height: 40px !important;
             box-sizing: border-box;
-            padding: 0 10px;
+            padding: 0 10px !important;
         }
 
         .filter-btn:hover {
-            background-color: var(--verde-escuro);
-            color: white;
+            background-color: var(--verde-escuro) !important;
+            color: white !important;
             transform: translateY(-2px);
         }
 
@@ -143,10 +144,10 @@
             z-index: 1000;
         }
 
-        /* --- RODAPÉ CORPORATIVO --- */
+        /* --- RODAPÉ --- */
         .corporate-footer {
-            background-color: rgba(0, 0, 0, 0.45); 
-            color: rgba(255, 255, 255, 0.85); 
+            background-color: rgba(0, 0, 0, 0.45) !important; 
+            color: rgba(255, 255, 255, 0.85) !important; 
             padding: 12px 20px;
             text-align: center;
             font-size: 0.8rem;
@@ -159,15 +160,6 @@
             width: 100%;
             box-sizing: border-box;
             backdrop-filter: blur(3px);
-        }
-
-        .map-container .corporate-footer,
-        #welcome-screen .corporate-footer {
-            background-color: rgba(0, 0, 0, 0.45);
-            color: rgba(255, 255, 255, 0.85);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(3px);
-            box-shadow: none;
         }
 
         .footer-text {
@@ -350,37 +342,4 @@
             dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
         } else {
             for (var variavel in window) {
-                if (variavel.startsWith('json_2026_COPRODIA_BASE_1') || (variavel.includes('COPRODIA') && typeof window[variavel] === 'object')) {
-                    dadosGeograficos = window[variavel];
-                    break;
-                }
-            }
-        }
-
-        if (dadosGeograficos) {
-            var layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
-                interactive: true,
-                pane: 'pane_2026_COPRODIA_BASE_1',
-                onEachFeature: function (feature, layer) {
-                    var propriedades = feature.properties;
-                    var tituloTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || propriedades['Talhão'] || 'Dados do Talhão';
-                    
-                    var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
-                    tabelaConteudo += '<table class="custom-popup-table">';
-                    
-                    for (var chave in propriedades) {
-                        if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
-                        var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
-                        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
-                    }
-                    
-                    tabelaConteudo += '</table>';
-                    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
-                },
-                style: style_talhao,
-            });
-            map.addLayer(layer_2026_COPRODIA_BASE_1);
-        }
-    </script>
-</body>
-</html>
+                if (variavel.startsWith('json_2026_COPRO
