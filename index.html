@@ -424,4 +424,203 @@
     <script src="js/L.Control.Layers.Tree.min.js"></script>
     <script src="js/leaflet.rotatedMarker.js"></script>
     <script src="js/L.Control.Locate.min.js"></script>
-    <script src="js/leaflet-hash
+    <script src="js/leaflet-hash.js"></script>
+    <script src="js/leaflet.pattern.js"></script>
+    <script src="js/Autolinker.min.js"></script>
+    <script src="js/rbush.min.js"></script>
+    <script src="js/labelgun.min.js"></script>
+    <script src="js/labels.js"></script>
+    
+    <script src="data/2026_COPRODIA_BASE_1.js?v=4.0"></script>
+    
+    <script>
+        var limitesCoprodia = [[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]];
+
+        var map = L.map('map', {
+            zoomControl:true, maxZoom:28, minZoom:1
+        });
+        
+        var hash = new L.Hash(map);
+        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
+        
+        map.createPane('pane_GoogleSatellite_0');
+        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
+        
+        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
+            pane: 'pane_GoogleSatellite_0',
+            opacity: 1.0,
+            minZoom: 1,
+            maxZoom: 28,
+        });
+        map.addLayer(layer_GoogleSatellite_0);
+
+        map.createPane('pane_2026_COPRODIA_BASE_1');
+        map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
+
+        function style_talhao() {
+            return {
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                opacity: 1,
+                color: 'rgba(248,204,35,1.0)',
+                dashArray: '',
+                lineCap: 'square',
+                lineJoin: 'bevel',
+                weight: 2.2,
+                fillOpacity: 0.12,
+                fillColor: 'rgba(15,108,55,1.0)',
+                interactive: true,
+            }
+        }
+
+        var dadosGeograficos = null;
+        if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
+            dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
+        } else if (typeof json_2026_COPRODIA_BASE_1 !== 'undefined') {
+            dadosGeograficos = json_2026_COPRODIA_BASE_1;
+        } else {
+            for (var chaveVariavel in window) {
+                if (chaveVariavel.startsWith('json_2026_COPRODIA_BASE_1') || (chaveVariavel.includes('COPRODIA') && typeof window[chaveVariavel] === 'object')) {
+                    dadosGeograficos = window[chaveVariavel];
+                    break;
+                }
+            }
+        }
+
+        function configurarPopUp(feature, layer) {
+            var propriedades = feature.properties;
+            var nomeFazenda = 'Dados do Talhão';
+            for (var k in propriedades) {
+                var campoMin = k.toLowerCase().trim();
+                if (campoMin === 'nome_faz' || campoMin === 'nome faz' || campoMin === 'fazenda' || campoMin === 'nome_fazenda' || campoMin === 'nomefaz') {
+                    if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
+                        nomeFazenda = propriedades[k].toString().toUpperCase();
+                        break;
+                    }
+                }
+            }
+            
+            var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
+            tabelaConteudo += '<table class="custom-popup-table">';
+            
+            for (var chave in propriedades) {
+                var chaveMin = chave.toLowerCase().trim();
+                if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda' || chaveMin === 'nomefaz') {
+                    continue;
+                }
+                var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
+                tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
+            }
+            
+            tabelaConteudo += '</table>';
+            layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
+        }
+
+        var layer_2026_COPRODIA_BASE_1;
+        if (dadosGeograficos) {
+            layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
+                interactive: true,
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                onEachFeature: configurarPopUp,
+                style: style_talhao,
+            });
+            map.addLayer(layer_2026_COPRODIA_BASE_1);
+        }
+
+        map.fitBounds(limitesCoprodia);
+
+        function entrarNoMapa(setor) {
+            var tela = document.getElementById('welcome-screen');
+            tela.classList.add('hidden');
+            document.body.classList.add('map-active');
+            
+            setTimeout(function() {
+                map.invalidateSize();
+                map.fitBounds(limitesCoprodia);
+            }, 100);
+        }
+
+        function retornarParaHome() {
+            var tela = document.getElementById('welcome-screen');
+            tela.classList.remove('hidden');
+            document.body.classList.remove('map-active');
+        }
+
+        // --- SISTEMA INTEGRADOR DE APIs EM TEMPO REAL ---
+        async function atualizarDashboardReal() {
+            try {
+                const responseDolar = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
+                const dadosDolar = await responseDolar.json();
+                if(dadosDolar && dadosDolar.USDBRL) {
+                    const cotacao = parseFloat(dadosDolar.USDBRL.bid).toFixed(2).replace('.', ',');
+                    const variacao = parseFloat(dadosDolar.USDBRL.pctChange);
+                    
+                    document.getElementById('val-dolar').innerText = `R$ ${cotacao}`;
+                    const varEl = document.getElementById('val-dolar').nextElementSibling;
+                    if(variacao >= 0) {
+                        varEl.className = "card-variation up";
+                        varEl.innerText = `▲ +${variacao.toFixed(2)}%`;
+                    } else {
+                        varEl.className = "card-variation down";
+                        varEl.innerText = `▼ ${variacao.toFixed(2)}%`;
+                    }
+                }
+            } catch (error) {
+                console.error("Erro ao buscar cotação do Dólar:", error);
+                document.getElementById('val-dolar').innerText = "Indisponível";
+            }
+
+            try {
+                const responseClima = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-13.67&longitude=-57.89&current_weather=true&timezone=America%2FCuiaba');
+                const dadosClima = await responseClima.json();
+                if(dadosClima && dadosClima.current_weather) {
+                    const temp = Math.round(dadosClima.current_weather.temperature);
+                    const code = dadosClima.current_weather.weathercode;
+                    
+                    document.getElementById('val-clima').innerText = `${temp}°C`;
+                    
+                    let descricaoTempo = "Céu Limpo";
+                    if (code >= 1 && code <= 3) descricaoTempo = "Parcialmente Nublado";
+                    else if (code >= 45 && code <= 48) descricaoTempo = "Com Névoa";
+                    else if (code >= 51 && code <= 67) descricaoTempo = "Chuva Leve";
+                    else if (code >= 71 && code <= 86) descricaoTempo = "Instável / Chuva";
+                    else if (code >= 95) descricaoTempo = "Tempestades";
+                    
+                    document.getElementById('val-clima').nextElementSibling.innerText = descricaoTempo;
+                }
+            } catch (error) {
+                console.error("Erro ao buscar dados climáticos:", error);
+                document.getElementById('val-clima').innerText = "--°C";
+            }
+
+            const cotacoesLocais = {
+                boi: { valor: "282,50", var: "+0.45", direcao: "up" },
+                soja: { valor: "134,20", var: "-0.12", direcao: "down" },
+                milho: { valor: "58,90", var: "+1.15", direcao: "up" },
+                algodao: { valor: "142,15", var: "-0.32", direcao: "down" }
+            };
+
+            atualizarCardAgro('boi', cotacoesLocais.boi);
+            atualizarCardAgro('soja', cotacoesLocais.soja);
+            atualizarCardAgro('milho', cotacoesLocais.milho);
+            atualizarCardAgro('algodao', cotacoesLocais.algodao);
+        }
+
+        function atualizarCardAgro(id, objetoDados) {
+            const valEl = document.getElementById(`val-${id}`);
+            if(valEl) {
+                valEl.innerText = `R$ ${objetoDados.valor}`;
+                const varEl = valEl.nextElementSibling;
+                if(objetoDados.direcao === 'up') {
+                    varEl.className = "card-variation up";
+                    varEl.innerText = `▲ ${objetoDados.var}%`;
+                } else {
+                    varEl.className = "card-variation down";
+                    varEl.innerText = `▼ ${objetoDados.var}%`;
+                }
+            }
+        }
+
+        window.onload = atualizarDashboardReal;
+    </script>
+</body>
+</html>
