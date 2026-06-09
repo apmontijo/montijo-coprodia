@@ -383,13 +383,12 @@
             }
         }
 
-        // FUNÇÃO DE RENDERIZAÇÃO DO POP-UP ATUALIZADA
+       // FUNÇÃO DE RENDERIZAÇÃO DO POP-UP ATUALIZADA (APENAS AREA E TALHAO)
 function configurarPopUp(feature, layer) {
     var propriedades = feature.properties;
     
-    // 1. Identificar o nome da fazenda corretamente
-    // Verificamos campos que costumam conter o nome da fazenda
-    var nomeFazenda = 'Dados do Talhão'; // Valor padrão
+    // 1. Identificar o nome da fazenda (mantido como antes)
+    var nomeFazenda = 'Dados do Talhão';
     var chavesPossiveis = ['NOME_FAZ', 'NOME FAZ', 'FAZENDA', 'NOME_FAZENDA', 'NOMEFAZ', 'NOME'];
 
     for (var i = 0; i < chavesPossiveis.length; i++) {
@@ -400,26 +399,23 @@ function configurarPopUp(feature, layer) {
         }
     }
     
-    // 2. Constrói o cabeçalho verde do pop-up
+    // 2. Constrói o cabeçalho verde
     var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
     tabelaConteudo += '<table class="custom-popup-table">';
     
-    // 3. Monta as linhas internas
-    for (var chave in propriedades) {
-        var chaveUpper = chave.toUpperCase().trim();
-        
-        // Ignora campos que já foram usados no cabeçalho ou que são IDs técnicos
-        if (chaveUpper === 'ID' || 
-            chaveUpper === 'NOME_FAZ' || chaveUpper === 'NOME FAZ' || 
-            chaveUpper === 'FAZENDA' || chaveUpper === 'NOME_FAZENDA' || 
-            chaveUpper === 'NOMEFAZ' || chaveUpper === 'NOME' ||
-            propriedades[chave] === null) {
-            continue;
+    // 3. Monta as linhas apenas com AREA e TALHAO
+    // Definimos os campos que queremos exibir explicitamente
+    var camposParaExibir = ['AREA', 'TALHAO'];
+
+    camposParaExibir.forEach(function(campo) {
+        // Verifica se o campo existe nas propriedades (case insensitive)
+        for (var chave in propriedades) {
+            if (chave.toUpperCase() === campo) {
+                var valor = propriedades[chave] !== null ? propriedades[chave].toString() : "N/A";
+                tabelaConteudo += '<tr><td class="popup-label">' + campo + ':</td><td class="popup-value">' + autolinker.link(valor) + '</td></tr>';
+            }
         }
-        
-        var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
-        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
-    }
+    });
     
     tabelaConteudo += '</table>';
     layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
