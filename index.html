@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montijo - Painel Interativo Coprodia</title>
     
-    <link rel="stylesheet" href="css/leaflet.css">
-    <link rel="stylesheet" href="css/qgis2web.css">
+    <link rel="stylesheet" href="css/leaflet.css?v=1.1">
+    <link rel="stylesheet" href="css/qgis2web.css?v=1.1">
     
     <style>
         :root {
@@ -78,12 +78,12 @@
             box-sizing: border-box;
         }
 
-        /* --- ALTERAÇÃO SOLICITADA: COR EXTRAÍDA DO RGB (IMAGE_26D8A3.PNG) --- */
+        /* --- CABEÇALHO DO MAPA COM A COR ATUALIZADA RGB (235, 247, 235) --- */
         #main-header {
             position: absolute;
             top: 0;
             left: 0;
-            background: rgb(235, 247, 235) !important; /* Verde claro suave exato da imagem */
+            background: rgb(235, 247, 235) !important; /* Definição exata extraída da imagem */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -253,7 +253,6 @@
 </head>
 <body>
 
-    <!-- TELA DE BOAS-VINDAS -->
     <div id="welcome-screen">
         <header class="cabecalho-padrao">
             <div class="header-brand">
@@ -285,7 +284,6 @@
         </footer>
     </div>
 
-    <!-- CABEÇALHO DO MAPA (COM A NOVA COMPOSIÇÃO DE COR SÓLIDA RGB) -->
     <header id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
@@ -309,7 +307,6 @@
         </nav>
     </header>
 
-    <!-- CONTAINER DO MAPA E RODAPÉ -->
     <div class="map-container">
         <div id="map"></div>
         
