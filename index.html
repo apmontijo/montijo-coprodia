@@ -78,13 +78,12 @@
             box-sizing: border-box;
         }
 
-        /* --- CORREÇÃO DA DIREÇÃO DO GRADIENTE NO CABEÇALHO DO MAPA --- */
+        /* --- ALTERAÇÃO SOLICITADA: COR EXTRAÍDA DO RGB (IMAGE_26D8A3.PNG) --- */
         #main-header {
             position: absolute;
             top: 0;
             left: 0;
-            /* Gradiente corrigido: Branco na esquerda (0%), transiciona para o verde claro no meio (50%) e segue estável em verde claro até a direita (100%) */
-            background: linear-gradient(to right, #ffffff 0%, var(--verde-claro) 50%, var(--verde-claro) 100%) !important;
+            background: rgb(235, 247, 235) !important; /* Verde claro suave exato da imagem */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -245,7 +244,6 @@
         @media (max-width: 992px) {
             #welcome-screen .cabecalho-padrao,
             #main-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; position: relative; }
-            #main-header { background: var(--verde-claro) !important; } 
             .header-brand { flex-direction: column; gap: 10px; }
             .header-title { font-size: 1.8rem !important; white-space: normal; }
             .filter-menu { width: 100%; flex-wrap: wrap; justify-content: center; }
@@ -255,6 +253,7 @@
 </head>
 <body>
 
+    <!-- TELA DE BOAS-VINDAS -->
     <div id="welcome-screen">
         <header class="cabecalho-padrao">
             <div class="header-brand">
@@ -286,6 +285,7 @@
         </footer>
     </div>
 
+    <!-- CABEÇALHO DO MAPA (COM A NOVA COMPOSIÇÃO DE COR SÓLIDA RGB) -->
     <header id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
@@ -309,6 +309,7 @@
         </nav>
     </header>
 
+    <!-- CONTAINER DO MAPA E RODAPÉ -->
     <div class="map-container">
         <div id="map"></div>
         
