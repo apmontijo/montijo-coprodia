@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montijo - Painel Interativo Coprodia</title>
     
-    <link rel="stylesheet" href="css/leaflet.css?v=2.0">
-    <link rel="stylesheet" href="css/qgis2web.css?v=2.0">
+    <link rel="stylesheet" href="css/leaflet.css?v=3.0">
+    <link rel="stylesheet" href="css/qgis2web.css?v=3.0">
     
     <style>
         :root {
             --verde-escuro: #0f6c37;
             --verde-claro: #5cb85c;
             --amarelo-ouro: #f8cc23;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(15, 108, 55, 0.2);
         }
 
         html, body {
@@ -43,6 +45,8 @@
             align-items: center;
             transition: opacity 0.4s ease, visibility 0.4s ease;
             box-sizing: border-box;
+            padding-top: 100px;
+            padding-bottom: 60px;
         }
 
         #welcome-screen.hidden {
@@ -78,7 +82,7 @@
             box-sizing: border-box;
         }
 
-        /* --- CABEÇALHO DO MAPA COM A COR ATUALIZADA RGB (235, 247, 235) --- */
+        /* --- CABEÇALHO DO MAPA --- */
         #main-header {
             position: absolute;
             top: 0;
@@ -130,7 +134,6 @@
             gap: 8px;
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-            
             width: 170px !important;
             height: 40px !important;
             box-sizing: border-box;
@@ -151,7 +154,79 @@
             vertical-align: middle;
         }
 
-        /* --- CONTROLE DE EXIBIÇÃO E AJUSTE DO MAPA --- */
+        /* --- DASHBOARD DE COTAÇÕES --- */
+        .dashboard-container {
+            width: 85%;
+            max-width: 1100px;
+            margin: 0 auto;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            width: 100%;
+        }
+
+        .market-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            backdrop-filter: blur(4px);
+        }
+
+        .market-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            border-color: var(--verde-escuro);
+        }
+
+        .card-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+        }
+
+        .card-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--verde-escuro);
+            margin: 2px 0;
+        }
+
+        .card-variation {
+            font-size: 11px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .up { color: #2e7d32; }
+        .down { color: #c62828; }
+
+        /* Card customizado do Clima */
+        .weather-card {
+            background: rgba(15, 108, 55, 0.9) !important;
+            border: 1px solid var(--verde-escuro);
+        }
+        .weather-card .card-label { color: rgba(255, 255, 255, 0.7); }
+        .weather-card .card-value { color: var(--amarelo-ouro); }
+        .weather-card .weather-desc { color: #ffffff; font-size: 11px; font-weight: 500; }
+
+        /* --- CONTROLE DO MAPA --- */
         .map-container {
             flex: 1;
             display: none; 
@@ -174,7 +249,7 @@
             background-color: #f4f6f4;
         }
 
-        /* --- RODAPÉ INTERNO E EXTERNO --- */
+        /* --- RODAPÉ CORPORATIVO --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
@@ -207,7 +282,7 @@
             top: 90px !important;
         }
 
-        /* --- POP-UP CUSTOMIZADO --- */
+        /* --- POP-UP CUSTOMIZADO DO MAPA --- */
         .custom-popup .leaflet-popup-content-wrapper {
             background: #ffffff;
             border-radius: 8px;
@@ -242,6 +317,7 @@
         .popup-label { font-weight: 700; color: #555; width: 40%; text-transform: uppercase; font-size: 11px; }
         .popup-value { text-align: right; font-weight: 500; color: #111; }
 
+        /* COMPATIBILIDADE MOBILE */
         @media (max-width: 992px) {
             #welcome-screen .cabecalho-padrao,
             #main-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; position: relative; }
@@ -249,11 +325,19 @@
             .header-title { font-size: 1.8rem !important; white-space: normal; }
             .filter-menu { width: 100%; flex-wrap: wrap; justify-content: center; }
             .map-container .leaflet-top { top: 10px !important; }
+            .dashboard-grid { grid-template-columns: repeat(3, 1fr); }
+            #welcome-screen { padding-top: 180px; }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-grid { grid-template-columns: repeat(2, 1fr); }
+            #welcome-screen { padding-top: 220px; }
         }
     </style>
 </head>
 <body>
 
+    <!-- TELA DE BOAS-VINDAS / PAINEL INICIAL -->
     <div id="welcome-screen">
         <header class="cabecalho-padrao">
             <div class="header-brand">
@@ -278,13 +362,62 @@
             </nav>
         </header>
 
+        <!-- Div vazia para balanceamento do flexbox e preservação do espaço central da logomarca Coprodia -->
         <div></div> 
+
+        <!-- DASHBOARD ITERATIVO DE COTAÇÕES -->
+        <div class="dashboard-container">
+            <div class="dashboard-grid">
+                <!-- BOI GORDO -->
+                <div class="market-card">
+                    <div class="card-label">Boi Gordo (@)</div>
+                    <div class="card-value" id="val-boi">Carregando...</div>
+                    <div class="card-variation">--</div>
+                </div>
+
+                <!-- SOJA -->
+                <div class="market-card">
+                    <div class="card-label">Soja (sc 60kg)</div>
+                    <div class="card-value" id="val-soja">Carregando...</div>
+                    <div class="card-variation">--</div>
+                </div>
+
+                <!-- MILHO -->
+                <div class="market-card">
+                    <div class="card-label">Milho (sc 60kg)</div>
+                    <div class="card-value" id="val-milho">Carregando...</div>
+                    <div class="card-variation">--</div>
+                </div>
+
+                <!-- ALGODÃO -->
+                <div class="market-card">
+                    <div class="card-label">Algodão (lp)</div>
+                    <div class="card-value" id="val-algodao">Carregando...</div>
+                    <div class="card-variation">--</div>
+                </div>
+
+                <!-- DÓLAR -->
+                <div class="market-card">
+                    <div class="card-label">Dólar Comercial</div>
+                    <div class="card-value" id="val-dolar">Carregando...</div>
+                    <div class="card-variation">--</div>
+                </div>
+
+                <!-- CLIMA EM TEMPO REAL -->
+                <div class="market-card weather-card">
+                    <div class="card-label">Clima C. Novo</div>
+                    <div class="card-value" id="val-clima">--°C</div>
+                    <div class="weather-desc">Atualizando...</div>
+                </div>
+            </div>
+        </div>
 
         <footer class="corporate-footer">
             <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
         </footer>
     </div>
 
+    <!-- CABEÇALHO DO MAPA -->
     <header id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
@@ -308,6 +441,7 @@
         </nav>
     </header>
 
+    <!-- MAPA DO PROJETO -->
     <div class="map-container">
         <div id="map"></div>
         
@@ -316,6 +450,7 @@
         </footer>
     </div>
 
+    <!-- SCRIPTS PADRÕES DO QGIS2WEB -->
     <script src="js/qgis2web_expressions.js"></script>
     <script src="js/leaflet.js"></script>
     <script src="js/L.Control.Layers.Tree.min.js"></script>
@@ -328,9 +463,11 @@
     <script src="js/labelgun.min.js"></script>
     <script src="js/labels.js"></script>
     
-    <script src="data/2026_COPRODIA_BASE_1.js?v=2.0"></script>
+    <!-- BANCO DE DADOS GEOGRÁFICOS DO PROJETO -->
+    <script src="data/2026_COPRODIA_BASE_1.js?v=3.0"></script>
     
     <script>
+        // Configuração Geográfica Inicial
         var limitesCoprodia = [[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]];
 
         var map = L.map('map', {
@@ -383,11 +520,8 @@
             }
         }
 
-        // FUNÇÃO DE RENDERIZAÇÃO DO POP-UP FORÇADA E ATUALIZADA
         function configurarPopUp(feature, layer) {
             var propriedades = feature.properties;
-            
-            // 1. Captura o valor real do nome da fazenda nos atributos
             var nomeFazenda = 'Dados do Talhão';
             for (var k in propriedades) {
                 var campoMin = k.toLowerCase().trim();
@@ -399,18 +533,14 @@
                 }
             }
             
-            // 2. Constrói o cabeçalho verde do pop-up usando o nome da Fazenda extraído
             var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
             tabelaConteudo += '<table class="custom-popup-table">';
             
-            // 3. Monta as linhas internas excluindo estritamente o campo da fazenda e ID redundantes
             for (var chave in propriedades) {
                 var chaveMin = chave.toLowerCase().trim();
-                
                 if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda' || chaveMin === 'nomefaz') {
-                    continue; // Pula a linha impedindo a exibição de "NOME FAZ" na tabela
+                    continue;
                 }
-                
                 var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
                 tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
             }
@@ -424,7 +554,7 @@
             layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
                 interactive: true,
                 pane: 'pane_2026_COPRODIA_BASE_1',
-                onEachFeature: configurarPopUp, // Aponta diretamente para a nova função estruturada
+                onEachFeature: configurarPopUp,
                 style: style_talhao,
             });
             map.addLayer(layer_2026_COPRODIA_BASE_1);
@@ -432,6 +562,7 @@
 
         map.fitBounds(limitesCoprodia);
 
+        // Funções de Navegação de Telas
         function entrarNoMapa(setor) {
             var tela = document.getElementById('welcome-screen');
             tela.classList.add('hidden');
@@ -448,6 +579,89 @@
             tela.classList.remove('hidden');
             document.body.classList.remove('map-active');
         }
+
+        // --- SISTEMA INTEGRADOR DE APIs EM TEMPO REAL ---
+        async function atualizarDashboardReal() {
+            // 1. Dólar Comercial ao vivo (AwesomeAPI)
+            try {
+                const responseDolar = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
+                const dadosDolar = await responseDolar.json();
+                if(dadosDolar && dadosDolar.USDBRL) {
+                    const cotacao = parseFloat(dadosDolar.USDBRL.bid).toFixed(2).replace('.', ',');
+                    const variacao = parseFloat(dadosDolar.USDBRL.pctChange);
+                    
+                    document.getElementById('val-dolar').innerText = `R$ ${cotacao}`;
+                    const varEl = document.getElementById('val-dolar').nextElementSibling;
+                    if(variacao >= 0) {
+                        varEl.className = "card-variation up";
+                        varEl.innerText = `▲ +${variacao.toFixed(2)}%`;
+                    } else {
+                        varEl.className = "card-variation down";
+                        varEl.innerText = `▼ ${variacao.toFixed(2)}%`;
+                    }
+                }
+            } catch (error) {
+                console.error("Erro ao buscar cotação do Dólar:", error);
+                document.getElementById('val-dolar').innerText = "Indisponível";
+            }
+
+            // 2. Meteorologia de Precisão - Campo Novo do Parecis (Open-Meteo API)
+            try {
+                const responseClima = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-13.67&longitude=-57.89&current_weather=true&timezone=America%2FCuiaba');
+                const dadosClima = await responseClima.json();
+                if(dadosClima && dadosClima.current_weather) {
+                    const temp = Math.round(dadosClima.current_weather.temperature);
+                    const code = dadosClima.current_weather.weathercode;
+                    
+                    document.getElementById('val-clima').innerText = `${temp}°C`;
+                    
+                    // Tratamento dos códigos meteorológicos internacionais da WMO
+                    let descricaoTempo = "Céu Limpo";
+                    if (code >= 1 && code <= 3) descricaoTempo = "Parcialmente Nublado";
+                    else if (code >= 45 && code <= 48) descricaoTempo = "Com Névoa";
+                    else if (code >= 51 && code <= 67) descricaoTempo = "Chuva Leve";
+                    else if (code >= 71 && code <= 86) descricaoTempo = "Instável / Chuva";
+                    else if (code >= 95) descricaoTempo = "Tempestades";
+                    
+                    document.getElementById('val-clima').nextElementSibling.innerText = descricaoTempo;
+                }
+            } catch (error) {
+                console.error("Erro ao buscar dados climáticos:", error);
+                document.getElementById('val-clima').innerText = "--°C";
+            }
+
+            // 3. Central de Controle Local das Commodities (Cepea / Balcão)
+            // Altere os valores diretamente abaixo para atualizar os dados internos do seu painel:
+            const cotacoesLocais = {
+                boi: { valor: "282,50", var: "+0.45", direcao: "up" },
+                soja: { valor: "134,20", var: "-0.12", direcao: "down" },
+                milho: { valor: "58,90", var: "+1.15", direcao: "up" },
+                algodao: { valor: "142,15", var: "-0.32", direcao: "down" }
+            };
+
+            atualizarCardAgro('boi', cotacoesLocais.boi);
+            atualizarCardAgro('soja', cotacoesLocais.soja);
+            atualizarCardAgro('milho', cotacoesLocais.milho);
+            atualizarCardAgro('algodao', cotacoesLocais.algodao);
+        }
+
+        function atualizarCardAgro(id, objetoDados) {
+            const valEl = document.getElementById(`val-${id}`);
+            if(valEl) {
+                valEl.innerText = `R$ ${objetoDados.valor}`;
+                const varEl = valEl.nextElementSibling;
+                if(objetoDados.direcao === 'up') {
+                    varEl.className = "card-variation up";
+                    varEl.innerText = `▲ ${objetoDados.var}%`;
+                } else {
+                    varEl.className = "card-variation down";
+                    varEl.innerText = `▼ ${objetoDados.var}%`;
+                }
+            }
+        }
+
+        // Inicialização do carregamento assíncrono
+        window.onload = atualizarDashboardReal;
     </script>
 </body>
 </html>
