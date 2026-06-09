@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montijo - Painel Interativo Coprodia</title>
     
-    <link rel="stylesheet" href="css/leaflet.css?v=1.1">
-    <link rel="stylesheet" href="css/qgis2web.css?v=1.1">
+    <link rel="stylesheet" href="css/leaflet.css?v=1.2">
+    <link rel="stylesheet" href="css/qgis2web.css?v=1.2">
     
     <style>
         :root {
@@ -83,7 +83,7 @@
             position: absolute;
             top: 0;
             left: 0;
-            background: rgb(235, 247, 235) !important; /* Definição exata extraída da imagem */
+            background: rgb(235, 247, 235) !important; 
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
@@ -221,7 +221,7 @@
             font-family: 'Segoe UI', Arial, sans-serif;
             font-size: 13px;
             color: #333;
-            min-width: 220px;
+            min-width: 240px;
         }
 
         .custom-popup-header {
@@ -229,16 +229,17 @@
             color: white;
             font-weight: bold;
             text-align: center;
-            padding: 8px;
+            padding: 10px 8px;
             border-radius: 4px 4px 0 0;
             margin-bottom: 6px;
             font-size: 14px;
+            line-height: 1.4;
         }
 
         .custom-popup-table tr { border-bottom: 1px solid #eaeaea; }
         .custom-popup-table tr:last-child { border-bottom: none; }
-        .custom-popup-table td { padding: 6px 8px; }
-        .popup-label { font-weight: 700; color: #555; width: 45%; }
+        .custom-popup-table td { padding: 8px 8px; }
+        .popup-label { font-weight: 700; color: #555; width: 40%; text-transform: uppercase; font-size: 11px; }
         .popup-value { text-align: right; font-weight: 500; color: #111; }
 
         @media (max-width: 992px) {
@@ -389,14 +390,31 @@
                 pane: 'pane_2026_COPRODIA_BASE_1',
                 onEachFeature: function (feature, layer) {
                     var propriedades = feature.properties;
-                    var tituloTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || propriedades['Talhão'] || 'Dados do Talhão';
                     
-                    var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
+                    // 1. Identificar o nome da fazenda dinamicamente nos dados do shapefile/geojson
+                    var nomeFazenda = 'Dados do Talhão';
+                    for (var k in propriedades) {
+                        if (k.toLowerCase() === 'nome_faz' || k.toLowerCase() === 'nome faz' || k.toLowerCase() === 'fazenda' || k.toLowerCase() === 'nome_fazenda') {
+                            if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
+                                nomeFazenda = propriedades[k].toString().toUpperCase();
+                            }
+                        }
+                    }
+                    
+                    // 2. Criar a caixa verde usando o nome da Fazenda como cabeçalho principal
+                    var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
                     tabelaConteudo += '<table class="custom-popup-table">';
                     
+                    // 3. Varre os dados gerando as linhas internas e omitindo a linha redundante de nome da fazenda
                     for (var chave in propriedades) {
-                        if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
-                        var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
+                        var chaveMin = chave.toLowerCase();
+                        
+                        // Ignora IDs nulos e descarta completamente a linha antiga "NOME FAZ" da tabela
+                        if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda') {
+                            continue;
+                        }
+                        
+                        var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
                         tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
                     }
                     
