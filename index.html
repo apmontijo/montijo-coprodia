@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Montijo - Painel Interativo Coprodia</title>
     
-    <link rel="stylesheet" href="css/leaflet.css?v=1.2">
-    <link rel="stylesheet" href="css/qgis2web.css?v=1.2">
+    <link rel="stylesheet" href="css/leaflet.css?v=2.0">
+    <link rel="stylesheet" href="css/qgis2web.css?v=2.0">
     
     <style>
         :root {
@@ -328,7 +328,7 @@
     <script src="js/labelgun.min.js"></script>
     <script src="js/labels.js"></script>
     
-    <script src="data/2026_COPRODIA_BASE_1.js"></script>
+    <script src="data/2026_COPRODIA_BASE_1.js?v=2.0"></script>
     
     <script>
         var limitesCoprodia = [[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]];
@@ -383,44 +383,48 @@
             }
         }
 
+        // FUNÇÃO DE RENDERIZAÇÃO DO POP-UP FORÇADA E ATUALIZADA
+        function configurarPopUp(feature, layer) {
+            var propriedades = feature.properties;
+            
+            // 1. Captura o valor real do nome da fazenda nos atributos
+            var nomeFazenda = 'Dados do Talhão';
+            for (var k in propriedades) {
+                var campoMin = k.toLowerCase().trim();
+                if (campoMin === 'nome_faz' || campoMin === 'nome faz' || campoMin === 'fazenda' || campoMin === 'nome_fazenda' || campoMin === 'nomefaz') {
+                    if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
+                        nomeFazenda = propriedades[k].toString().toUpperCase();
+                        break;
+                    }
+                }
+            }
+            
+            // 2. Constrói o cabeçalho verde do pop-up usando o nome da Fazenda extraído
+            var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
+            tabelaConteudo += '<table class="custom-popup-table">';
+            
+            // 3. Monta as linhas internas excluindo estritamente o campo da fazenda e ID redundantes
+            for (var chave in propriedades) {
+                var chaveMin = chave.toLowerCase().trim();
+                
+                if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda' || chaveMin === 'nomefaz') {
+                    continue; // Pula a linha impedindo a exibição de "NOME FAZ" na tabela
+                }
+                
+                var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
+                tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
+            }
+            
+            tabelaConteudo += '</table>';
+            layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
+        }
+
         var layer_2026_COPRODIA_BASE_1;
         if (dadosGeograficos) {
             layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
                 interactive: true,
                 pane: 'pane_2026_COPRODIA_BASE_1',
-                onEachFeature: function (feature, layer) {
-                    var propriedades = feature.properties;
-                    
-                    // 1. Identificar o nome da fazenda dinamicamente nos dados do shapefile/geojson
-                    var nomeFazenda = 'Dados do Talhão';
-                    for (var k in propriedades) {
-                        if (k.toLowerCase() === 'nome_faz' || k.toLowerCase() === 'nome faz' || k.toLowerCase() === 'fazenda' || k.toLowerCase() === 'nome_fazenda') {
-                            if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
-                                nomeFazenda = propriedades[k].toString().toUpperCase();
-                            }
-                        }
-                    }
-                    
-                    // 2. Criar a caixa verde usando o nome da Fazenda como cabeçalho principal
-                    var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
-                    tabelaConteudo += '<table class="custom-popup-table">';
-                    
-                    // 3. Varre os dados gerando as linhas internas e omitindo a linha redundante de nome da fazenda
-                    for (var chave in propriedades) {
-                        var chaveMin = chave.toLowerCase();
-                        
-                        // Ignora IDs nulos e descarta completamente a linha antiga "NOME FAZ" da tabela
-                        if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda') {
-                            continue;
-                        }
-                        
-                        var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
-                        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
-                    }
-                    
-                    tabelaConteudo += '</table>';
-                    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
-                },
+                onEachFeature: configurarPopUp, // Aponta diretamente para a nova função estruturada
                 style: style_talhao,
             });
             map.addLayer(layer_2026_COPRODIA_BASE_1);
