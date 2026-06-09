@@ -34,7 +34,6 @@
             left: 0;
             width: 100%;
             height: 100%;
-            /* REMOVIDO GRADIENTE ESCURO: Imagem de fundo totalmente limpa e nítida no centro */
             background: url('fundo-coprodia.png') no-repeat center center;
             background-size: cover;
             z-index: 9999;
@@ -51,15 +50,15 @@
             visibility: hidden;
         }
 
-        /* --- CABEÇALHO PADRONIZADO (BACKGROUND APENAS AQUI) --- */
+        /* --- CABEÇALHO PADRONIZADO (SEM BACKGROUND, APENAS LINHA VERDE) --- */
         .site-header {
-            background-color: rgba(0, 0, 0, 0.45); /* Mantido fundo escuro translúcido para leitura dos elementos */
-            backdrop-filter: blur(5px); 
+            background-color: transparent; /* Remove o fundo do cabeçalho */
+            backdrop-filter: none; /* Remove o desfoque de fundo */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 4px solid var(--verde-escuro);
+            border-bottom: 4px solid var(--verde-escuro); /* Mantém apenas a linha verde separando */
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
@@ -76,17 +75,17 @@
             align-items: center;
         }
 
-        /* TÍTULO CORRIGIDO: Aumentado em 2x o tamanho original para máximo destaque */
+        /* TÍTULO AJUSTADO: Fonte menor com sombra no tom verde da Coprodia */
         .header-title {
-            font-size: 3.6rem; /* Dobro do tamanho anterior (1.8rem -> 3.6rem) */
+            font-size: 2.5rem; /* Reduzido em 0.7 em relação ao tamanho anterior */
             font-weight: 700;
             color: #ffffff; 
             margin: 0;
             white-space: nowrap;
-            text-shadow: 2px 2px 6px rgba(0,0,0,0.6);
+            /* Sombra no tom verde escuro da marca para dar contraste e legibilidade */
+            text-shadow: 2px 2px 4px var(--verde-escuro), -1px -1px 0 var(--verde-escuro), 1px -1px 0 var(--verde-escuro), -1px 1px 0 var(--verde-escuro), 1px 1px 0 var(--verde-escuro);
         }
 
-        /* Mantém o título visível na tela interna se necessário */
         .map-active .header-title {
             color: #ffffff;
         }
@@ -101,10 +100,10 @@
             background-color: rgba(255, 255, 255, 0.95);
             border: 2px solid var(--verde-escuro);
             color: var(--verde-escuro);
-            padding: 12px 26px;
+            padding: 10px 24px;
             border-radius: 30px;
             cursor: pointer;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -141,9 +140,9 @@
             z-index: 1000;
         }
 
-        /* --- RODAPÉ CORPORATIVO (BACKGROUND APENAS AQUI) --- */
+        /* --- RODAPÉ CORPORATIVO (MANTÉM O BACKGROUND ESCURO TRANSLÚCIDO) --- */
         .corporate-footer {
-            background-color: rgba(0, 0, 0, 0.45); /* Faixa escura translúcida padrão */
+            background-color: rgba(0, 0, 0, 0.45); 
             color: rgba(255, 255, 255, 0.85); 
             padding: 12px 20px;
             text-align: center;
@@ -211,7 +210,7 @@
         @media (max-width: 992px) {
             .site-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
             .header-brand { flex-direction: column; gap: 10px; }
-            .header-title { font-size: 2.2rem; white-space: normal; }
+            .header-title { font-size: 1.8rem; white-space: normal; }
             .filter-menu { width: 100%; justify-content: center; }
             #welcome-screen .site-header { position: relative; }
         }
