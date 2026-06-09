@@ -383,41 +383,47 @@
             }
         }
 
-        // FUNÇÃO DE RENDERIZAÇÃO DO POP-UP FORÇADA E ATUALIZADA
-        function configurarPopUp(feature, layer) {
-            var propriedades = feature.properties;
-            
-            // 1. Captura o valor real do nome da fazenda nos atributos
-            var nomeFazenda = 'Dados do Talhão';
-            for (var k in propriedades) {
-                var campoMin = k.toLowerCase().trim();
-                if (campoMin === 'nome_faz' || campoMin === 'nome faz' || campoMin === 'fazenda' || campoMin === 'nome_fazenda' || campoMin === 'nomefaz') {
-                    if (propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
-                        nomeFazenda = propriedades[k].toString().toUpperCase();
-                        break;
-                    }
-                }
-            }
-            
-            // 2. Constrói o cabeçalho verde do pop-up usando o nome da Fazenda extraído
-            var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
-            tabelaConteudo += '<table class="custom-popup-table">';
-            
-            // 3. Monta as linhas internas excluindo estritamente o campo da fazenda e ID redundantes
-            for (var chave in propriedades) {
-                var chaveMin = chave.toLowerCase().trim();
-                
-                if (chaveMin === 'id' || propriedades[chave] === null || chaveMin === 'nome_faz' || chaveMin === 'nome faz' || chaveMin === 'fazenda' || chaveMin === 'nome_fazenda' || chaveMin === 'nomefaz') {
-                    continue; // Pula a linha impedindo a exibição de "NOME FAZ" na tabela
-                }
-                
-                var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
-                tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
-            }
-            
-            tabelaConteudo += '</table>';
-            layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
+        // FUNÇÃO DE RENDERIZAÇÃO DO POP-UP ATUALIZADA
+function configurarPopUp(feature, layer) {
+    var propriedades = feature.properties;
+    
+    // 1. Identificar o nome da fazenda corretamente
+    // Verificamos campos que costumam conter o nome da fazenda
+    var nomeFazenda = 'Dados do Talhão'; // Valor padrão
+    var chavesPossiveis = ['NOME_FAZ', 'NOME FAZ', 'FAZENDA', 'NOME_FAZENDA', 'NOMEFAZ', 'NOME'];
+
+    for (var i = 0; i < chavesPossiveis.length; i++) {
+        var k = chavesPossiveis[i];
+        if (propriedades.hasOwnProperty(k) && propriedades[k] !== null && propriedades[k].toString().trim() !== '') {
+            nomeFazenda = propriedades[k].toString().toUpperCase();
+            break; 
         }
+    }
+    
+    // 2. Constrói o cabeçalho verde do pop-up
+    var tabelaConteudo = '<div class="custom-popup-header">' + nomeFazenda + '</div>';
+    tabelaConteudo += '<table class="custom-popup-table">';
+    
+    // 3. Monta as linhas internas
+    for (var chave in propriedades) {
+        var chaveUpper = chave.toUpperCase().trim();
+        
+        // Ignora campos que já foram usados no cabeçalho ou que são IDs técnicos
+        if (chaveUpper === 'ID' || 
+            chaveUpper === 'NOME_FAZ' || chaveUpper === 'NOME FAZ' || 
+            chaveUpper === 'FAZENDA' || chaveUpper === 'NOME_FAZENDA' || 
+            chaveUpper === 'NOMEFAZ' || chaveUpper === 'NOME' ||
+            propriedades[chave] === null) {
+            continue;
+        }
+        
+        var nomeColuna = chave.replace(/_/g, ' ').toUpperCase();
+        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
+    }
+    
+    tabelaConteudo += '</table>';
+    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
+}
 
         var layer_2026_COPRODIA_BASE_1;
         if (dadosGeograficos) {
