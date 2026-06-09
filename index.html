@@ -50,9 +50,9 @@
             visibility: hidden;
         }
 
-        /* --- NOVO CABEÇALHO PADRONIZADO (FUNDO PRETO 15% E LINHA VERDE) --- */
-        .site-header {
-            background: rgba(0, 0, 0, 0.15) !important; /* Fundo preto com 15% de transparência */
+        /* --- CABEÇALHO PADRONIZADO (FUNDO PRETO 40% TRANSPARENTE) --- */
+        .cabecalho-padrao {
+            background: rgba(0, 0, 0, 0.40) !important; 
             backdrop-filter: none !important; 
             -webkit-backdrop-filter: none !important;
             padding: 15px 40px;
@@ -65,7 +65,7 @@
             box-sizing: border-box;
         }
 
-        #welcome-screen .site-header {
+        #welcome-screen .cabecalho-padrao {
             position: absolute;
             top: 0;
             left: 0;
@@ -76,18 +76,18 @@
             align-items: center;
         }
 
-        /* TÍTULO PADRONIZADO: Sem sombras e com clique ativo para voltar à Home */
+        /* TÍTULO: Sem nenhuma sombra e clicável para voltar à Home */
         .header-title {
             font-size: 2.5rem !important; 
             font-weight: 700;
             color: #ffffff !important; 
             margin: 0;
             white-space: nowrap;
-            text-shadow: none !important; /* Remoção absoluta de sombras antigas */
-            cursor: pointer !important; /* Garante o visual de link clicável */
+            text-shadow: none !important; 
+            cursor: pointer !important; 
         }
 
-        /* --- BOTÕES PADRONIZADOS E SIMÉTRICOS --- */
+        /* --- BOTÕES DO CABEÇALHO PADRONIZADOS E SIMÉTRICOS --- */
         .filter-menu {
             display: flex;
             gap: 15px;
@@ -100,7 +100,7 @@
             color: var(--verde-escuro) !important;
             border-radius: 30px !important;
             cursor: pointer;
-            font-size: 0.8rem !important; /* Tamanho reduzido em 0.8 */
+            font-size: 0.8rem !important; 
             font-weight: 600;
             display: flex;
             align-items: center;
@@ -109,7 +109,7 @@
             transition: all 0.3s ease;
             box-shadow: 0 4px 10px rgba(0,0,0,0.15);
             
-            /* Tamanho fixo e idêntico para todos os botões */
+            /* Dimensões idênticas para garantir simetria perfeita */
             width: 170px !important;
             height: 40px !important;
             box-sizing: border-box;
@@ -144,7 +144,7 @@
             z-index: 1000;
         }
 
-        /* --- RODAPÉ --- */
+        /* --- RODAPÉ CORPORATIVO --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
@@ -203,18 +203,18 @@
         .popup-value { text-align: right; font-weight: 500; color: #111; }
 
         @media (max-width: 992px) {
-            .site-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
+            .cabecalho-padrao { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
             .header-brand { flex-direction: column; gap: 10px; }
             .header-title { font-size: 1.8rem !important; white-space: normal; }
             .filter-menu { width: 100%; flex-wrap: wrap; justify-content: center; }
-            #welcome-screen .site-header { position: relative; }
+            #welcome-screen .cabecalho-padrao { position: relative; }
         }
     </style>
 </head>
 <body>
 
     <div id="welcome-screen">
-        <header class="site-header">
+        <header class="cabecalho-padrao">
             <div class="header-brand">
                 <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
             </div>
@@ -239,7 +239,7 @@
         </footer>
     </div>
 
-    <header class="site-header" id="main-header">
+    <header class="cabecalho-padrao" id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
         </div>
@@ -250,7 +250,7 @@
                 Home
             </button>
 
-            <button class="filter-btn" id="btn-agricola" onclick="alert('Mostrando talhões agrícolas de cana-de-açúcar.')">
+            <button class="filter-btn" id="btn-agricola" onclick="entrarNoMapa('agricola')">
                 <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
                 Agrícola
             </button>
@@ -342,4 +342,37 @@
             dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
         } else {
             for (var variavel in window) {
-                if (variavel.startsWith('json_2026_COPRO
+                if (variavel.startsWith('json_2026_COPRODIA_BASE_1') || (variavel.includes('COPRODIA') && typeof window[variavel] === 'object')) {
+                    dadosGeograficos = window[variavel];
+                    break;
+                }
+            }
+        }
+
+        if (dadosGeograficos) {
+            var layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
+                interactive: true,
+                pane: 'pane_2026_COPRODIA_BASE_1',
+                onEachFeature: function (feature, layer) {
+                    var propriedades = feature.properties;
+                    var tituloTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || propriedades['Talhão'] || 'Dados do Talhão';
+                    
+                    var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
+                    tabelaConteudo += '<table class="custom-popup-table">';
+                    
+                    for (var chave in propriedades) {
+                        if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
+                        var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
+                        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
+                    }
+                    
+                    tabelaConteudo += '</table>';
+                    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
+                },
+                style: style_talhao,
+            });
+            map.addLayer(layer_2026_COPRODIA_BASE_1);
+        }
+    </script>
+</body>
+</html>
