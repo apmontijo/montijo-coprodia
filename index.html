@@ -27,7 +27,7 @@
             overflow: hidden;
         }
 
-        /* --- TELA DE BOAS-VINDAS / PÁGINA INICIAL (SPLASH SCREEN) --- */
+        /* --- TELA DE BOAS-VINDAS / PÁGINA INICIAL --- */
         #welcome-screen {
             position: fixed;
             top: 0;
@@ -41,7 +41,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            transition: opacity 0.5s ease, visibility 0.5s ease;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
             box-sizing: border-box;
         }
 
@@ -51,7 +51,7 @@
             pointer-events: none;
         }
 
-        /* --- CABEÇALHO PADRONIZADO (FUNDO PRETO 55% TRANSPARENTE) --- */
+        /* --- CABEÇALHO PADRONIZADO (55% DE TRANSPARÊNCIA) --- */
         .cabecalho-padrao {
             background: rgba(0, 0, 0, 0.55) !important; 
             backdrop-filter: none !important; 
@@ -125,7 +125,8 @@
             width: 20px;
             height: 20px;
             object-fit: contain;
-            display: block;
+            display: inline-block;
+            vertical-align: middle;
         }
 
         /* --- CONTROLE DE EXIBIÇÃO DO MAPA --- */
@@ -227,12 +228,12 @@
 
             <nav class="filter-menu">
                 <button class="filter-btn" id="btn-agricola-welcome" onclick="entrarNoMapa('agricola')">
-                    <img src="cana-vetor.jpg" class="btn-icon" alt="Cana" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%230f6c37\'><path d=\'M12 2L2 22h20z\'/></svg>'">
+                    <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
                     Agrícola
                 </button>
 
                 <button class="filter-btn" id="btn-confinamento-welcome" onclick="entrarNoMapa('confinamento')">
-                    <img src="boi-vetor.jpg" class="btn-icon" alt="Boi" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%230f6c37\'><path d=\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z\'/></svg>'">
+                    <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
                     Confinamento
                 </button>
             </nav>
@@ -252,17 +253,17 @@
 
         <nav class="filter-menu">
             <button class="filter-btn" id="btn-home" onclick="retornarParaHome()">
-                <img src="casa-vetor.jpg" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.png'">
+                <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
                 Home
             </button>
 
             <button class="filter-btn" id="btn-agricola" onclick="entrarNoMapa('agricola')">
-                <img src="cana-vetor.jpg" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.png'">
+                <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
                 Agrícola
             </button>
 
             <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
-                <img src="boi-vetor.jpg" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.png'">
+                <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
                 Confinamento
             </button>
         </nav>
@@ -291,15 +292,12 @@
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
-        // Coordenadas geográficas salvas padrão da área da Coprodia
+        // Limites geográficos estritos da Coprodia
         var limitesCoprodia = [[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]];
 
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
         });
-        
-        // Inicializa focado nos limites corretos para evitar o mapa-mundi infinito
-        map.fitBounds(limitesCoprodia);
         
         var hash = new L.Hash(map);
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -333,20 +331,24 @@
             }
         }
 
+        // varredura dinâmica aprimorada para capturar os dados do arquivo da pasta data/ independente do nome interno gerado
         var dadosGeograficos = null;
         if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
             dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
+        } else if (typeof json_2026_COPRODIA_BASE_1 !== 'undefined') {
+            dadosGeograficos = json_2026_COPRODIA_BASE_1;
         } else {
-            for (var variavel in window) {
-                if (variavel.startsWith('json_2026_COPRODIA_BASE_1') || (variavel.includes('COPRODIA') && typeof window[variavel] === 'object')) {
-                    dadosGeograficos = window[variavel];
+            for (var chaveVariavel in window) {
+                if (chaveVariavel.startsWith('json_2026_COPRODIA_BASE_1') || (chaveVariavel.includes('COPRODIA') && typeof window[chaveVariavel] === 'object')) {
+                    dadosGeograficos = window[chaveVariavel];
                     break;
                 }
             }
         }
 
+        var layer_2026_COPRODIA_BASE_1;
         if (dadosGeograficos) {
-            var layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
+            layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
                 interactive: true,
                 pane: 'pane_2026_COPRODIA_BASE_1',
                 onEachFeature: function (feature, layer) {
@@ -370,16 +372,19 @@
             map.addLayer(layer_2026_COPRODIA_BASE_1);
         }
 
+        // Aplica o enquadramento inicial correto
+        map.fitBounds(limitesCoprodia);
+
         function entrarNoMapa(setor) {
             var tela = document.getElementById('welcome-screen');
             tela.classList.add('hidden');
             document.body.classList.add('map-active');
             
-            // Correção Crítica: Força o Leaflet a renderizar as dimensões e centralizar nos talhões geográficos
+            // Corrige o bug de inicialização em camadas invisíveis recalculando e dando o zoom forçado na Coprodia
             setTimeout(function() {
                 map.invalidateSize();
                 map.fitBounds(limitesCoprodia);
-            }, 250);
+            }, 100);
         }
 
         function retornarParaHome() {
