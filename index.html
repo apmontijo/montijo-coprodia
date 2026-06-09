@@ -584,31 +584,39 @@
         // --- SISTEMA INTEGRADOR DE APIs EM TEMPO REAL ---
         async function atualizarDashboardReal() {
             // 1. Dólar Comercial ao vivo (AwesomeAPI)
-            try {
-    const response = await fetch('https://economia.awesomeapi.com.br/last/USD-BRL');
-    const data = await response.json();
-    const dolar = data.USDBRL;
-    
-    const valorFormatado = `R$ ${parseFloat(dolar.bid).toFixed(2).replace('.', ',')}`;
-    
-    // Atualiza o Card principal na tela
-    document.getElementById('val-dolar').innerText = valorFormatado;
-    
-    // Atualiza o Dashboard (Modal) que criamos no Passo 1
-    document.getElementById('modal-val-dolar').innerText = valorFormatado;
-    document.getElementById('modal-info-dolar').innerText = `Variação: ${dolar.pctChange}% | Máx: R$ ${dolar.high} | Mín: R$ ${dolar.low}`;
-    
-    // Mantém a seta de variação no card principal
-    const variacao = parseFloat(dolar.pctChange);
-    const varEl = document.getElementById('val-dolar').nextElementSibling;
-    varEl.className = `card-variation ${variacao >= 0 ? 'up' : 'down'}`;
-    varEl.innerText = `${variacao >= 0 ? '▲' : '▼'} ${Math.abs(variacao).toFixed(2)}%`;
+  // Substitua o trecho antigo do Dólar dentro da função atualizarDashboardReal por isto:
+let chartDolar = null;
 
-} catch (error) {
-    console.error("Erro ao buscar dólar:", error);
-    document.getElementById('val-dolar').innerText = "Indisponível";
+async function abrirDashboardGrafico() {
+    document.getElementById('modal-dolar').style.display = 'flex';
+    
+    // Busca dados dos últimos 30 dias na AwesomeAPI
+    const res = await fetch('https://economia.awesomeapi.com.br/json/daily/USD-BRL/30');
+    const dados = await res.json();
+    
+    const labels = dados.map(d => new Date(d.timestamp * 1000).toLocaleDateString('pt-BR')).reverse();
+    const valores = dados.map(d => parseFloat(d.bid)).reverse();
+
+    const ctx = document.getElementById('graficoDolar').getContext('2d');
+    
+    if (chartDolar) chartDolar.destroy(); // Limpa gráfico anterior
+    
+    chartDolar = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Cotação Dólar (30 dias)',
+                data: valores,
+                borderColor: '#0f6c37',
+                backgroundColor: 'rgba(15, 108, 55, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
 }
-
             // 2. Meteorologia de Precisão - Campo Novo do Parecis (Open-Meteo API)
             try {
                 const responseClima = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-13.67&longitude=-57.89&current_weather=true&timezone=America%2FCuiaba');
@@ -678,11 +686,12 @@ cardDolar.onclick = function() {
         // Inicialização do carregamento assíncrono
         window.onload = atualizarDashboardReal;
     </script>
-    <div id="modal-dolar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
-    <div style="background:white; padding:30px; border-radius:15px; text-align:center; max-width: 400px; width: 90%; font-family: sans-serif;">
-        <h3 style="color: #0f6c37;">Dólar Comercial em Tempo Real</h3>
-        <p style="font-size: 2.5rem; color: #0f6c37; font-weight: bold; margin: 10px 0;" id="modal-val-dolar">Carregando...</p>
-        <p id="modal-info-dolar" style="color: #555;"></p>
+   <div id="modal-dolar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center;">
+    <div style="background:white; padding:20px; border-radius:15px; text-align:center; max-width: 600px; width: 90%;">
+        <h3 style="color: #0f6c37;">Histórico Dólar Comercial</h3>
+        <div style="width: 100%; height: 300px;">
+            <canvas id="graficoDolar"></canvas>
+        </div>
         <button onclick="document.getElementById('modal-dolar').style.display='none'" style="margin-top:20px; padding:10px 20px; background:#0f6c37; color:white; border:none; border-radius:5px; cursor:pointer;">Fechar</button>
     </div>
 </div>
