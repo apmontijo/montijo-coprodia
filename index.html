@@ -50,15 +50,16 @@
             visibility: hidden;
         }
 
-        /* --- CABEÇALHO PADRONIZADO (SEM BACKGROUND, APENAS LINHA VERDE) --- */
+        /* --- CABEÇALHO SEM BACKGROUND (APENAS A LINHA VERDE SEPARADORA) --- */
         .site-header {
-            background-color: transparent; /* Remove o fundo do cabeçalho */
-            backdrop-filter: none; /* Remove o desfoque de fundo */
+            background: transparent !important; /* Força a remoção de qualquer cor de fundo */
+            background-color: transparent !important;
+            backdrop-filter: none !important; /* Remove o desfoque antigo */
             padding: 15px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 4px solid var(--verde-escuro); /* Mantém apenas a linha verde separando */
+            border-bottom: 4px solid var(--verde-escuro); /* Apenas a linha verde separando */
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
@@ -75,15 +76,21 @@
             align-items: center;
         }
 
-        /* TÍTULO AJUSTADO: Fonte menor com sombra no tom verde da Coprodia */
+        /* TÍTULO CORRIGIDO: Fonte reduzida e super destaque com sombra verde Coprodia */
         .header-title {
-            font-size: 2.5rem; /* Reduzido em 0.7 em relação ao tamanho anterior */
+            font-size: 2.5rem !important; /* Reduzido o tamanho da fonte */
             font-weight: 700;
             color: #ffffff; 
             margin: 0;
             white-space: nowrap;
-            /* Sombra no tom verde escuro da marca para dar contraste e legibilidade */
-            text-shadow: 2px 2px 4px var(--verde-escuro), -1px -1px 0 var(--verde-escuro), 1px -1px 0 var(--verde-escuro), -1px 1px 0 var(--verde-escuro), 1px 1px 0 var(--verde-escuro);
+            /* Sombra reforçada em múltiplos ângulos com o verde oficial para máxima leitura */
+            text-shadow: 
+                3px 3px 0px var(--verde-escuro),
+                -1px -1px 0px var(--verde-escuro),  
+                 1px -1px 0px var(--verde-escuro),
+                -1px  1px 0px var(--verde-escuro),
+                 1px  1px 0px var(--verde-escuro),
+                 0px  3px 5px rgba(0, 0, 0, 0.5);
         }
 
         .map-active .header-title {
@@ -140,7 +147,7 @@
             z-index: 1000;
         }
 
-        /* --- RODAPÉ CORPORATIVO (MANTÉM O BACKGROUND ESCURO TRANSLÚCIDO) --- */
+        /* --- RODAPÉ CORPORATIVO --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45); 
             color: rgba(255, 255, 255, 0.85); 
@@ -210,7 +217,7 @@
         @media (max-width: 992px) {
             .site-header { flex-direction: column; gap: 15px; padding: 15px; text-align: center; }
             .header-brand { flex-direction: column; gap: 10px; }
-            .header-title { font-size: 1.8rem; white-space: normal; }
+            .header-title { font-size: 1.8rem !important; white-space: normal; }
             .filter-menu { width: 100%; justify-content: center; }
             #welcome-screen .site-header { position: relative; }
         }
@@ -298,81 +305,4 @@
         function retornarParaHome() {
             var tela = document.getElementById('welcome-screen');
             tela.classList.remove('hidden');
-            document.body.classList.remove('map-active');
-        }
-
-        var map = L.map('map', {
-            zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
-        
-        var hash = new L.Hash(map);
-        var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
-        
-        map.createPane('pane_GoogleSatellite_0');
-        map.getPane('pane_GoogleSatellite_0').style.zIndex = 400;
-        
-        var layer_GoogleSatellite_0 = L.tileLayer('https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}', {
-            pane: 'pane_GoogleSatellite_0',
-            opacity: 1.0,
-            minZoom: 1,
-            maxZoom: 28,
-        });
-        map.addLayer(layer_GoogleSatellite_0);
-
-        map.createPane('pane_2026_COPRODIA_BASE_1');
-        map.getPane('pane_2026_COPRODIA_BASE_1').style.zIndex = 401;
-
-        function style_talhao() {
-            return {
-                pane: 'pane_2026_COPRODIA_BASE_1',
-                opacity: 1,
-                color: 'rgba(248,204,35,1.0)',
-                dashArray: '',
-                lineCap: 'square',
-                lineJoin: 'bevel',
-                weight: 2.2,
-                fillOpacity: 0.12,
-                fillColor: 'rgba(15,108,55,1.0)',
-                interactive: true,
-            }
-        }
-
-        var dadosGeograficos = null;
-        if (typeof json_2026_COPRODIA_BASE_1_0 !== 'undefined') {
-            dadosGeograficos = json_2026_COPRODIA_BASE_1_0;
-        } else {
-            for (var variavel in window) {
-                if (variavel.startsWith('json_2026_COPRODIA_BASE_1') || (variavel.includes('COPRODIA') && typeof window[variavel] === 'object')) {
-                    dadosGeograficos = window[variavel];
-                    break;
-                }
-            }
-        }
-
-        if (dadosGeograficos) {
-            var layer_2026_COPRODIA_BASE_1 = new L.geoJson(dadosGeograficos, {
-                interactive: true,
-                pane: 'pane_2026_COPRODIA_BASE_1',
-                onEachFeature: function (feature, layer) {
-                    var propriedades = feature.properties;
-                    var tituloTalhao = propriedades['id'] || propriedades['ID'] || propriedades['talhao'] || propriedades['Talhão'] || 'Dados do Talhão';
-                    
-                    var tabelaConteudo = '<div class="custom-popup-header">Talhão: ' + tituloTalhao + '</div>';
-                    tabelaConteudo += '<table class="custom-popup-table">';
-                    
-                    for (var chave in propriedades) {
-                        if (chave.toLowerCase() === 'id' || propriedades[chave] === null) continue;
-                        var nomeColuna = chave.replace(/_/g, ' ').replace(/\b\w/g, function(l){ return l.toUpperCase() });
-                        tabelaConteudo += '<tr><td class="popup-label">' + nomeColuna + ':</td><td class="popup-value">' + autolinker.link(propriedades[chave].toString()) + '</td></tr>';
-                    }
-                    
-                    tabelaConteudo += '</table>';
-                    layer.bindPopup(tabelaConteudo, { maxHeight: 400, className: 'custom-popup' });
-                },
-                style: style_talhao,
-            });
-            map.addLayer(layer_2026_COPRODIA_BASE_1);
-        }
-    </script>
-</body>
-</html>
+            document.body.classList
