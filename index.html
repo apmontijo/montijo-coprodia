@@ -51,13 +51,13 @@
             pointer-events: none;
         }
 
-        /* --- CABEÇALHO DA PÁGINA INICIAL --- */
+        /* --- CONFIGURAÇÃO DO CABEÇALHO DA PÁGINA INICIAL --- */
         #welcome-screen .cabecalho-padrao {
             position: absolute;
             top: 0;
             left: 0;
-            background: rgba(0, 0, 0, 0.45);
-            padding: 15px 40px;
+            background-color: #666666; /* Cinza original da sua primeira tela */
+            padding: 12px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -65,14 +65,14 @@
             box-sizing: border-box;
         }
 
-        /* --- CABEÇALHO DA PÁGINA DO MAPA (ALTERAÇÃO SOLICITADA) --- */
+        /* --- ALTERAÇÃO CORRETIVA: CABEÇALHO DO MAPA IGUAL À PÁGINA INICIAL --- */
         #main-header {
-            background: rgba(0, 0, 0, 0.30) !important; /* Fundo preto com 30% de background */
-            padding: 15px 40px;
+            background-color: #666666 !important; /* Mesma cor exata de fundo da página inicial */
+            padding: 12px 40px !important;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 4px solid var(--verde-escuro);
+            border-bottom: none !important; /* Removida a borda verde indesejada */
             width: 100%;
             z-index: 2000;
             box-sizing: border-box;
@@ -147,16 +147,17 @@
             z-index: 1000;
         }
 
-        /* --- RODAPÉ --- */
+        /* --- ALTERAÇÃO CORRETIVA: RODAPÉ IGUAL À PÁGINA INICIAL --- */
         .corporate-footer {
-            background-color: rgba(0, 0, 0, 0.45);
-            color: rgba(255, 255, 255, 0.85);
-            padding: 12px 20px;
+            background-color: #666666 !important; /* Mesma cor exata de fundo da página inicial */
+            color: rgba(255, 255, 255, 0.9) !important;
+            padding: 10px 20px !important;
             text-align: center;
             font-size: 0.8rem;
             z-index: 2000;
             width: 100%;
             box-sizing: border-box;
+            border-top: none !important;
         }
 
         .footer-text {
@@ -165,7 +166,7 @@
             font-weight: 500;
         }
 
-        /* POP-UP ORIGINAL REPLICADO */
+        /* POP-UP ORIGINAL REPLICADO (MANTIDO INTACTO) */
         .custom-popup .leaflet-popup-content-wrapper {
             background: #ffffff;
             border-radius: 8px;
