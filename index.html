@@ -41,7 +41,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            transition: opacity 0.8s ease, visibility 0.8s ease;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
             box-sizing: border-box;
         }
 
@@ -51,9 +51,9 @@
             pointer-events: none;
         }
 
-        /* --- CABEÇALHO NOVO E PADRONIZADO (FUNDO PRETO 55% TRANSPARENTE) --- */
+        /* --- CABEÇALHO PADRONIZADO (FUNDO PRETO 55% TRANSPARENTE) --- */
         .cabecalho-padrao {
-            background: rgba(0, 0, 0, 0.55) !important; /* Ajustado para 55% de transparência */
+            background: rgba(0, 0, 0, 0.55) !important; 
             backdrop-filter: none !important; 
             -webkit-backdrop-filter: none !important;
             padding: 15px 40px;
@@ -125,19 +125,19 @@
             width: 20px;
             height: 20px;
             object-fit: contain;
+            display: block;
         }
 
         /* --- CONTROLE DE EXIBIÇÃO DO MAPA --- */
         .map-container {
             flex: 1;
-            display: none; /* Inicia oculto para não quebrar o layout da Splash Screen */
+            display: none; 
             flex-direction: column;
             position: relative;
             width: 100%;
             height: 100%;
         }
 
-        /* Força a exibição do mapa apenas quando a classe ativa for injetada */
         .map-active .map-container {
             display: flex !important;
         }
@@ -148,6 +148,7 @@
             padding: 0;
             margin: 0;
             z-index: 1000;
+            background-color: #f4f6f4;
         }
 
         /* --- RODAPÉ --- */
@@ -226,12 +227,12 @@
 
             <nav class="filter-menu">
                 <button class="filter-btn" id="btn-agricola-welcome" onclick="entrarNoMapa('agricola')">
-                    <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
+                    <img src="cana-vetor.jpg" class="btn-icon" alt="Cana" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%230f6c37\'><path d=\'M12 2L2 22h20z\'/></svg>'">
                     Agrícola
                 </button>
 
                 <button class="filter-btn" id="btn-confinamento-welcome" onclick="entrarNoMapa('confinamento')">
-                    <img src="boi-vetor.jpg" class="btn-icon" alt="Boi">
+                    <img src="boi-vetor.jpg" class="btn-icon" alt="Boi" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 24 24\' fill=\'%230f6c37\'><path d=\'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z\'/></svg>'">
                     Confinamento
                 </button>
             </nav>
@@ -251,17 +252,17 @@
 
         <nav class="filter-menu">
             <button class="filter-btn" id="btn-home" onclick="retornarParaHome()">
-                <img src="casa-vetor.jpg" class="btn-icon" alt="Home">
+                <img src="casa-vetor.jpg" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.png'">
                 Home
             </button>
 
             <button class="filter-btn" id="btn-agricola" onclick="entrarNoMapa('agricola')">
-                <img src="cana-vetor.jpg" class="btn-icon" alt="Cana">
+                <img src="cana-vetor.jpg" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.png'">
                 Agrícola
             </button>
 
             <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
-                <img src="boi-vetor.jpg" class="btn-icon" alt="Boi">
+                <img src="boi-vetor.jpg" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.png'">
                 Confinamento
             </button>
         </nav>
@@ -290,26 +291,15 @@
     <script src="data/2026_COPRODIA_BASE_1.js"></script>
     
     <script>
-        function entrarNoMapa(setor) {
-            var tela = document.getElementById('welcome-screen');
-            tela.classList.add('hidden');
-            document.body.classList.add('map-active');
-            
-            // Recalcula o tamanho do mapa para carregar os talhões sem falhas cinzas na tela
-            setTimeout(function() {
-                map.invalidateSize();
-            }, 200);
-        }
-
-        function retornarParaHome() {
-            var tela = document.getElementById('welcome-screen');
-            tela.classList.remove('hidden');
-            document.body.classList.remove('map-active');
-        }
+        // Coordenadas geográficas salvas padrão da área da Coprodia
+        var limitesCoprodia = [[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]];
 
         var map = L.map('map', {
             zoomControl:true, maxZoom:28, minZoom:1
-        }).fitBounds([[-13.876718333132928,-57.99368145316724],[-13.677106019007645,-57.699194818347564]]);
+        });
+        
+        // Inicializa focado nos limites corretos para evitar o mapa-mundi infinito
+        map.fitBounds(limitesCoprodia);
         
         var hash = new L.Hash(map);
         var autolinker = new Autolinker({truncate: {length: 30, location: 'smart'}});
@@ -378,6 +368,24 @@
                 style: style_talhao,
             });
             map.addLayer(layer_2026_COPRODIA_BASE_1);
+        }
+
+        function entrarNoMapa(setor) {
+            var tela = document.getElementById('welcome-screen');
+            tela.classList.add('hidden');
+            document.body.classList.add('map-active');
+            
+            // Correção Crítica: Força o Leaflet a renderizar as dimensões e centralizar nos talhões geográficos
+            setTimeout(function() {
+                map.invalidateSize();
+                map.fitBounds(limitesCoprodia);
+            }, 250);
+        }
+
+        function retornarParaHome() {
+            var tela = document.getElementById('welcome-screen');
+            tela.classList.remove('hidden');
+            document.body.classList.remove('map-active');
         }
     </script>
 </body>
