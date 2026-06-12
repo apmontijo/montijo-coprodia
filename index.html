@@ -341,28 +341,28 @@
 
     <!-- TELA DE BOAS-VINDAS / PAINEL INICIAL -->
     <div id="welcome-screen">
-        <header class="cabecalho-padrao">
-            <div class="header-brand">
-                <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
-            </div>
+         <header id="main-header">
+        <div class="header-brand">
+            <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
+        </div>
 
-            <nav class="filter-menu">
-                <button class="filter-btn" id="btn-home-welcome" onclick="retornarParaHome()">
-                    <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
-                    Home
-                </button>
+        <nav class="filter-menu">
+            <button class="filter-btn" id="btn-home" onclick="retornarParaHome()">
+                <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
+                Home
+            </button>
 
-                <button class="filter-btn" id="btn-agricola-welcome" onclick="entrarNoMapa('agricola')">
-                    <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
-                    Agrícola
-                </button>
+            <button class="filter-btn" id="btn-agricola" onclick="entrarNoMapa('agricola')">
+                <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
+                Agrícola
+            </button>
 
-                <button class="filter-btn" id="btn-confinamento-welcome" onclick="entrarNoMapa('confinamento')">
-                    <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
-                    Confinamento
-                </button>
-            </nav>
-        </header>
+            <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
+                <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
+                Confinamento
+            </button>
+        </nav>
+    </header>
 
         <!-- Div vazia para balanceamento do flexbox e preservação do espaço central da logomarca Coprodia -->
         <div></div> 
