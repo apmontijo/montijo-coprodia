@@ -76,31 +76,36 @@
         </div>
     </div>
 
-    <div id="modal-dolar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
-        <div style="background:white; padding:20px; border-radius:15px; width: 80%; height: 80%; position:relative;">
-            <h3 style="color: #0f6c37; margin-top:0;">Histórico Dólar Comercial</h3>
-            <div id="tradingview_chart" style="width: 100%; height: 80%;"></div>
-            <button onclick="document.getElementById('modal-dolar').style.display='none'" style="margin-top:10px; padding:10px 20px; background:#0f6c37; color:white; border:none; border-radius:5px; cursor:pointer;">Fechar</button>
-        </div>
+  <div id="modal-dolar" style="display:none; ...">
+    <div style="...">
+        <h3>Histórico Dólar Comercial</h3>
+        <div id="tradingview-container" style="width: 100%; height: 300px;"></div>
+        <button onclick="document.getElementById('modal-dolar').style.display='none'">Fechar</button>
     </div>
+</div>
 
-    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-    <script>
-        function abrirGraficoDolar() {
-            document.getElementById('modal-dolar').style.display = 'flex';
-            document.getElementById('tradingview_chart').innerHTML = ""; 
-            new TradingView.widget({
-                "container_id": "tradingview_chart",
-                "symbol": "FX:USDBRL",
-                "interval": "D",
-                "timezone": "America/Sao_Paulo",
-                "theme": "light",
-                "style": "1",
-                "locale": "br",
-                "width": "100%",
-                "height": "100%"
-            });
-        }
+  // No seu <script>, substitua a função de abertura:
+function abrirGraficoDolar() {
+    // 1. Abre o modal
+    const modal = document.getElementById('modal-dolar');
+    modal.style.display = 'flex';
+
+    // 2. Garante que o container exista e esteja limpo
+    const container = document.getElementById('tradingview-container');
+    container.innerHTML = ""; // Limpa tentativas anteriores
+
+    // 3. Cria o Widget
+    new TradingView.widget({
+        "container_id": "tradingview-container",
+        "symbol": "FX_IDC:USDBRL", // Tente usar este código de símbolo específico
+        "interval": "D",
+        "theme": "light",
+        "style": "1",
+        "locale": "br",
+        "width": "100%",
+        "height": "100%"
+    });
+}
 
         document.getElementById('card-dolar').onclick = abrirGraficoDolar;
 
