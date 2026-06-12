@@ -250,7 +250,7 @@
             background-color: #f4f6f4;
         }
 
-        /* --- RODAPÉ CORPORATIVO --- */
+       /* --- RODAPÉ CORPORATIVO --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
@@ -265,13 +265,15 @@
             justify-content: center;
             width: 100%;
             box-sizing: border-box;
-        }
-
-        .map-container .corporate-footer {
+            
+            /* Correção para fixar no rodapé */
             position: absolute;
             bottom: 0;
             left: 0;
         }
+
+        /* Removi a regra específica para .map-container porque agora 
+           a classe geral já trata o posicionamento absoluto */
 
         .footer-text {
             margin: 0;
@@ -282,7 +284,6 @@
         .map-container .leaflet-top {
             top: 90px !important;
         }
-
         /* --- POP-UP CUSTOMIZADO DO MAPA --- */
         .custom-popup .leaflet-popup-content-wrapper {
             background: #ffffff;
