@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma de Gestão Territorial</title>
+    <title>Montijo - Plataforma de Gestão Territorial</title>
     
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="css/leaflet.css?v=3.0">
@@ -244,14 +244,7 @@
             z-index: 1000;
             background-color: #f4f6f4;
         }
-.map-container {
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-}
 
-.map-active .map-container {
-    opacity: 1;
-}
     /* --- RODAPÉ CORPORATIVO --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
@@ -341,28 +334,28 @@
 
     <!-- TELA DE BOAS-VINDAS / PAINEL INICIAL -->
     <div id="welcome-screen">
-         <header id="main-header">
-        <div class="header-brand">
-            <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
-        </div>
+        <header class="cabecalho-padrao">
+            <div class="header-brand">
+                <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
+            </div>
 
-        <nav class="filter-menu">
-            <button class="filter-btn" id="btn-home" onclick="retornarParaHome()">
-                <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
-                Home
-            </button>
+            <nav class="filter-menu">
+                <button class="filter-btn" id="btn-home-welcome" onclick="retornarParaHome()">
+                    <img src="casa-vetor.png" class="btn-icon" alt="Home" onerror="this.src='casa-vetor.jpg'">
+                    Home
+                </button>
 
-            <button class="filter-btn" id="btn-agricola" onclick="entrarNoMapa('agricola')">
-                <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
-                Agrícola
-            </button>
+                <button class="filter-btn" id="btn-agricola-welcome" onclick="entrarNoMapa('agricola')">
+                    <img src="cana-vetor.png" class="btn-icon" alt="Cana" onerror="this.src='cana-vetor.jpg'">
+                    Agrícola
+                </button>
 
-            <button class="filter-btn" id="btn-confinamento" onclick="alert('Filtrando Confinamento Pecuário...')">
-                <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
-                Confinamento
-            </button>
-        </nav>
-    </header>
+                <button class="filter-btn" id="btn-confinamento-welcome" onclick="entrarNoMapa('confinamento')">
+                    <img src="boi-vetor.png" class="btn-icon" alt="Boi" onerror="this.src='boi-vetor.jpg'">
+                    Confinamento
+                </button>
+            </nav>
+        </header>
 
         <!-- Div vazia para balanceamento do flexbox e preservação do espaço central da logomarca Coprodia -->
         <div></div> 
@@ -583,28 +576,41 @@
         }
 
         // --- SISTEMA INTEGRADOR DE APIs EM TEMPO REAL ---
-      unction atualizarCardAgro(id, objetoDados) {
-    const valEl = document.getElementById(`val-${id}`);
-    if(valEl) {
-        valEl.innerText = `R$ ${objetoDados.valor}`;
-        const varEl = valEl.nextElementSibling;
-        if(varEl) {
-            varEl.className = `card-variation ${objetoDados.direcao}`;
-            varEl.innerText = `${objetoDados.direcao === 'up' ? '▲' : '▼'} ${objetoDados.var}%`;
-        }
-    }
+        async function atualizarDashboardReal() {
+            // 1. Dólar Comercial ao vivo (AwesomeAPI)
+  // Substitua o trecho antigo do Dólar dentro da função atualizarDashboardReal por isto:
+let chartDolar = null;
+
+async function abrirDashboardGrafico() {
+    document.getElementById('modal-dolar').style.display = 'flex';
+    
+    // Busca dados dos últimos 30 dias na AwesomeAPI
+    const res = await fetch('https://economia.awesomeapi.com.br/json/daily/USD-BRL/30');
+    const dados = await res.json();
+    
+    const labels = dados.map(d => new Date(d.timestamp * 1000).toLocaleDateString('pt-BR')).reverse();
+    const valores = dados.map(d => parseFloat(d.bid)).reverse();
+
+    const ctx = document.getElementById('graficoDolar').getContext('2d');
+    
+    if (chartDolar) chartDolar.destroy(); // Limpa gráfico anterior
+    
+    chartDolar = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Cotação Dólar (30 dias)',
+                data: valores,
+                borderColor: '#0f6c37',
+                backgroundColor: 'rgba(15, 108, 55, 0.1)',
+                fill: true,
+                tension: 0.3
+            }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+    });
 }
-
-const cotacoesLocais = {
-    boi: { valor: "282,50", var: "0.45", direcao: "up" },
-    soja: { valor: "134,20", var: "0.12", direcao: "down" },
-    milho: { valor: "58,90", var: "1.15", direcao: "up" },
-    algodao: { valor: "142,15", var: "0.32", direcao: "down" }
-};
-
-window.onload = () => {
-    Object.keys(cotacoesLocais).forEach(key => atualizarCardAgro(key, cotacoesLocais[key]));
-};
             // 2. Meteorologia de Precisão - Campo Novo do Parecis (Open-Meteo API)
             try {
                 const responseClima = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-13.67&longitude=-57.89&current_weather=true&timezone=America%2FCuiaba');
