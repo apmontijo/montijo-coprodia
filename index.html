@@ -250,7 +250,7 @@
             background-color: #f4f6f4;
         }
 
-       /* --- RODAPÉ CORPORATIVO --- */
+        /* --- RODAPÉ CORPORATIVO --- */
         .corporate-footer {
             background-color: rgba(0, 0, 0, 0.45) !important; 
             color: rgba(255, 255, 255, 0.85) !important; 
@@ -265,15 +265,13 @@
             justify-content: center;
             width: 100%;
             box-sizing: border-box;
-            
-            /* Correção para fixar no rodapé */
+        }
+
+        .map-container .corporate-footer {
             position: absolute;
             bottom: 0;
             left: 0;
         }
-
-        /* Removi a regra específica para .map-container porque agora 
-           a classe geral já trata o posicionamento absoluto */
 
         .footer-text {
             margin: 0;
@@ -284,6 +282,7 @@
         .map-container .leaflet-top {
             top: 90px !important;
         }
+
         /* --- POP-UP CUSTOMIZADO DO MAPA --- */
         .custom-popup .leaflet-popup-content-wrapper {
             background: #ffffff;
@@ -366,7 +365,8 @@
 
         <!-- Div vazia para balanceamento do flexbox e preservação do espaço central da logomarca Coprodia -->
         <div></div> 
- <!-- DASHBOARD ITERATIVO DE COTAÇÕES -->
+
+        <!-- DASHBOARD ITERATIVO DE COTAÇÕES -->
         <div class="dashboard-container">
             <div class="dashboard-grid">
                 <!-- BOI GORDO -->
@@ -412,18 +412,16 @@
                 </div>
             </div>
         </div>
-       
+
+        <footer class="corporate-footer">
+            <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
+        </footer>
     </div>
 
     <!-- CABEÇALHO DO MAPA -->
     <header id="main-header">
         <div class="header-brand">
             <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
-
-            <footer class="corporate-footer">
-            <p class="footer-text">Desenvolvido por Montijo - Agricultura de Precisão e Topografia &copy; 2026. Todos os direitos reservados.</p>
-        </footer>
-            
         </div>
 
         <nav class="filter-menu">
