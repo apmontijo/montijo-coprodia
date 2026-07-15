@@ -333,11 +333,20 @@
 <body>
 
     <!-- TELA DE BOAS-VINDAS / PAINEL INICIAL -->
-    <div id="welcome-screen">
-        <header class="cabecalho-padrao">
-            <div class="header-brand">
-                <h1 class="header-title" onclick="retornarParaHome()">Plataforma de Gestão Territorial</h1>
-            </div>
+<div id="welcome-screen" class="welcome-screen">
+    <div class="welcome-content">
+        <!-- Substitua 'assets/logo_montijo.png' pelo caminho real da sua imagem -->
+        <img src="assets/logo_montijo.png" alt="Montijo Agricultura de Precisão" class="logo-principal">
+        
+        <h1>Plataforma de Gestão Territorial</h1>
+        <p>Soluções em Topografia e Agricultura de Precisão</p>
+
+        <div class="menu-botoes">
+            <button onclick="entrarNoMapa('agricola')">Acessar Mapa Agrícola</button>
+            <button onclick="entrarNoMapa('confinamento')">Acessar Confinamento</button>
+        </div>
+    </div>
+</div>  
 
             <nav class="filter-menu">
                 <button class="filter-btn" id="btn-home-welcome" onclick="retornarParaHome()">
